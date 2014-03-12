@@ -1,0 +1,224 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.disid</groupId>
+	<artifactId>fiebdc3</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>fiebdc3</name>
+	<description>FIEBDC 3 format parser</description>
+
+	<licenses>
+		<license>
+			<name>GPLv3</name>
+			<url>http://www.gnu.org/licenses/gpl.html</url>
+			<distribution>repo</distribution>
+			<comments>
+            "GPL" stands for "General Public License". The most widespread such
+            license is the GNU General Public License, or GNU GPL for short.
+            This can be further shortened to "GPL", when it is understood that
+            the GNU GPL is the one intended.
+            </comments>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>gvSIG Association</name>
+		<url>http://www.gvsig.com/</url>
+	</organization>
+
+	<scm>
+		<connection>scm:svn:https://devel.gvsig.org/svn/gvsig-lang/trunk/org.gvsig.gvsiglang</connection>
+		<developerConnection>scm:svn:https://devel.gvsig.org/svn/gvsig-lang/trunk/org.gvsig.gvsiglang</developerConnection>
+		<url>https://devel.gvsig.org/redmine/projects/gvsig-lang/repository/show/trunk/org.gvsig.gvsiglang</url>
+	</scm>
+
+	<distributionManagement>
+		<site>
+			<id>gvsig-repository</id>
+			<url>dav:https://devel.gvsig.org/sites/${project.artifactId}/${project.version}</url>
+		</site>
+		<repository>
+			<id>gvsig-repository</id>
+			<name>gvSIG maven repository</name>
+			<url>dav:https://devel.gvsig.org/m2repo/j2se</url>
+			<uniqueVersion>false</uniqueVersion>
+		</repository>
+		<snapshotRepository>
+			<id>gvsig-repository</id>
+			<name>gvSIG maven repository</name>
+			<url>dav:https://devel.gvsig.org/m2repo/j2se</url>
+			<uniqueVersion>false</uniqueVersion>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<issueManagement>
+		<system>redmine</system>
+		<url>https://devel.gvsig.org/redmine/projects/gvsig-desktop</url>
+	</issueManagement>
+
+	<developers>
+		<developer>
+			<id>cordin</id>
+			<name>César Ordiñana</name>
+			<email>cordin@disid.com</email>
+			<roles>
+				<role>Architect</role>
+				<role>Developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-maven-plugin</artifactId>
+				<version>${antlr.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.antlr</groupId>
+				<artifactId>antlr4-runtime</artifactId>
+				<version>${antlr.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.1</version>
+					<configuration>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>2.16</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>integration-test</goal>
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.9.1</version>
+					<configuration>
+						<docTitle>${project.name} ${project.version}</docTitle>
+						<footer />
+						<header />
+						<keywords>true</keywords>
+						<detectLinks>true</detectLinks>
+						<javaApiLinks>
+							<property>
+								<name>api_1.6</name>
+								<value>http://download.oracle.com/javase/6/docs/api/</value>
+							</property>
+							<property>
+								<name>api_1.7</name>
+								<value>http://download.oracle.com/javase/7/docs/api/</value>
+							</property>
+							<property>
+								<name>antlr4 api</name>
+								<value>http://www.antlr.org/api/Java/</value>
+							</property>
+						</javaApiLinks>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.4</version>
+					<configuration>
+						<archive>
+							<manifestEntries>
+								<Built-By>DiSiD Team</Built-By>
+							</manifestEntries>
+						</archive>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<tagBase>https://devel.gvsig.org/svn/gvsig-lang/tags</tagBase>
+					<!-- This is a 2.0 beta 6 bug. By default the goals are 'clean verify', 
+						so the modules are not installed, so the dependencies between modules are 
+						not met. With this configuration we force the module installation. -->
+					<preparationGoals>clean install</preparationGoals>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<goals>deploy</goals>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<reporting>
+		<excludeDefaults>false</excludeDefaults>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.7</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-report-plugin</artifactId>
+				<version>2.16</version>
+				<reportSets>
+					<reportSet>
+						<id>integration-tests</id>
+						<reports>
+							<report>failsafe-report-only</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<linkJavadoc>true</linkJavadoc>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<properties>
+		<antlr.version>4.2</antlr.version>
+		<junit.version>4.11</junit.version>
+	</properties>
+
+	<modules>
+		<module>fiebdc3.api</module>
+		<module>fiebdc3.impl</module>
+	</modules>
+</project>
