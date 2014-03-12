@@ -1,9 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * FIEBDC 3 parser  
+ * Copyright (C) 2014 DiSiD Technologies
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/copyleft/gpl.html>.
  */
-
 grammar Fiebdc3;
 
 /* 
@@ -37,9 +48,12 @@ INFORMACION en alguno de sus campos y, por supuesto, el CODIGO de referencia.
 Para anular un campo numérico deberá aparecer explícitamente el valor 0 (cero).
 Para anular un campo alfanumérico deberá aparecer explícitamente el ROTULO NUL.
 */
-record: 'V' vInfo
-      | 'K' kCoefficient
-      | 'C' cConcept
+record: vInfo
+      | kCoefficient
+      | cConcept
+      | tText
+      | dBreakdown
+      | mMeasurement
       ;
 
 /*
@@ -49,7 +63,7 @@ ej:
 ~V   | CYPE INGENIEROS, S.A. | FIEBDC-3/2004                  | ARQUIMEDES           |                                            | ANSI                 | Certificación en curso | 3                    | 8                         |                          |
 NOTA: Ignora posibles campos adicionales añadidos en versiones posteriores
 */
-vInfo: FIELDSEP vFileProperty? FIELDSEP vVersionFormat (SUBFIELDSEP TEXT)? FIELDSEP vGeneratedBy? FIELDSEP vHeader? FIELDSEP vCharset? FIELDSEP vComments? FIELDSEP vInfoType? FIELDSEP vCertNum? FIELDSEP vCertDate? FIELDSEP (TEXT FIELDSEP)*;
+vInfo: 'V' FIELDSEP vFileProperty? FIELDSEP vVersionFormat (SUBFIELDSEP TEXT)? FIELDSEP vGeneratedBy? FIELDSEP vHeader? FIELDSEP vCharset? FIELDSEP vComments? FIELDSEP vInfoType? FIELDSEP vCertNum? FIELDSEP vCertDate? FIELDSEP (TEXT FIELDSEP)*;
       
 /*
 PROPIEDAD_ARCHIVO: Redactor de la base de datos u obra, fecha, …
@@ -87,9 +101,9 @@ COMENTARIO: Contenido del archivo (base, obra...).
 */
 vComments: TEXT;
 
-vInfoType: INT;
-vCertNum: INT;
-vCertDate: INT;
+vInfoType: TEXT;
+vCertNum: TEXT;
+vCertDate: TEXT;
 
 /*
 REGISTRO TIPO COEFICIENTES.
@@ -98,13 +112,15 @@ ej:
 ~K |      \ 2  \ 3  \ 3  \ 2  \ 2  \ 2  \ 2  \ EUR    \   | 0  \ 13 \ 6  \      \ 21  |       \ 2  \     \     \ 3   \     \ 2   \ 2  \ 2   \    \ 2  \ 3  \ EUR    \   |       |
 TODO: arreglar si es necesario
 */
-kCoefficient: FIELDSEP (INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP TEXT? SUBFIELDSEP)* FIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? FIELDSEP (INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP TEXT? SUBFIELDSEP)* FIELDSEP INT? FIELDSEP;
+kCoefficient: 'K' FIELDSEP (TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP)* FIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? FIELDSEP (TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP TEXT? SUBFIELDSEP)* FIELDSEP TEXT? FIELDSEP;
 
 /*
 REGISTRO TIPO CONCEPTO
 ~C | CODIGO { \ CODIGO } | [ UNIDAD ] | [ RESUMEN ] | { PRECIO \ } | { FECHA \ } | [ TIPO ] |
+Ej:
+~C | AZ346OBRA##         |            | Conserv...  | 1409291.73   | 260713      | 0        |
 */
-cConcept: FIELDSEP cCode (SUBFIELDSEP TEXT)* FIELDSEP cUnit? FIELDSEP cSummary? FIELDSEP (cPrice? | (cPrice SUBFIELDSEP)+) FIELDSEP (cDate? | (cDate SUBFIELDSEP?)+) FIELDSEP cType FIELDSEP;
+cConcept: 'C' FIELDSEP cCode (SUBFIELDSEP TEXT)* FIELDSEP cUnit? FIELDSEP cSummary? FIELDSEP (cPrice? | (cPrice SUBFIELDSEP)+) FIELDSEP (cDate? | (cDate SUBFIELDSEP?)+) FIELDSEP cType FIELDSEP;
      
 /*
 CODIGO: CODIGO del concepto descrito. Un concepto puede tener varios CODIGOs 
@@ -132,6 +148,7 @@ UNIDAD: Unidad de medida. Existe una relación de unidades de medida recomendada
 elaborada por la Asociación de Redactores de Bases de Datos de CONSTRUCCION. 
 Véase el Anexo 7 sobre Unidades de Medida.
 */
+/*
 cUnit: 'm'   //metro
      | 'm2'  //metro cuadrado
      | 'm3'  //metro cúbico
@@ -151,6 +168,8 @@ cUnit: 'm'   //metro
      | 'cu'  //cien unidades
      | 'mes' //mes
     ;
+*/
+cUnit: TEXT;
 
 /*
 RESUMEN: Resumen del texto descriptivo. Cada soporte indicará el número de
@@ -174,14 +193,14 @@ capítulo y concepto raíz de una Obra o Presupuesto. Como excepción a esta reg
 está el intercambio de mediciones no estructuradas (véase la descripción del
 registro Tipo Mediciones, ~M).
 */
-cprice: TEXT;
+cPrice: TEXT;
        
 /*
 FECHA: Fecha de la última actualización del precio. Cuando haya más de una fecha
 se asignarán secuencialmente a cada precio definido, si hay más precios que
 fechas, los precios sin su correspondiente fecha tomarán la última fecha definida.
 */
-cDate: INT;
+cDate: TEXT;
 
 /*
 TIPO: Tipo de concepto, Inicialmente se reservan los siguientes tipos:
@@ -191,8 +210,79 @@ la CNC en índices y fórmulas polinómicas de revisión de precios así como lo
 aconsejados por la Asociación de Redactores de Bases de Datos de la Construcción.
 En el Anexo 4 aparecen los tipos actualmente vigentes.
 */
-cType: INT;
+cType: TEXT;
 
+/*
+REGISTRO TIPO TEXTO
+~T | CODIGO_CONCEPTO | TEXTO_DESCRIPTIVO |
+*/
+tText: 'T' FIELDSEP tConceptCode FIELDSEP tDescription FIELDSEP;
+
+/*
+CODIGO_CONCEPTO: CODIGO del concepto descrito
+*/
+tConceptCode: TEXT;
+ 
+/*
+TEXTO_DESCRIPTIVO: Texto descriptivo del concepto sin limitación de tamaño. El
+texto podrá contener caracteres fin de línea (ASCII-13 + ASCII-10) que se
+mantendrán al reformatearlo.
+*/
+tDescription: TEXT;
+
+/*
+REGISTRO TIPO DESCOMPOSICION
+~D | CODIGO_PADRE | < CODIGO_HIJO \ [ FACTOR ] \ [ RENDIMIENTO ] \ > |
+Ej:
+~D | AZ346OBRA##  | 01#           \            \ 1                \02#\\1\03#\\1\04#\\1\|
+*/
+dBreakdown: 'D' FIELDSEP dParentCode FIELDSEP (dChildCode SUBFIELDSEP dFactor SUBFIELDSEP dPerformance SUBFIELDSEP)+ FIELDSEP;
+
+/*
+CODIGO_PADRE: CODIGO del concepto descompuesto.
+*/
+dParentCode: TEXT;
+ 
+/*
+CODIGO_HIJO: CODIGO de cada concepto que interviene en la descomposición.
+*/
+dChildCode: TEXT;
+ 
+/*
+FACTOR: Factor de rendimiento, por defecto 1.0
+*/
+dFactor: TEXT?;
+
+/*
+RENDIMIENTO: Número de unidades, rendimiento o medición, por defecto 1.0
+*/
+dPerformance: TEXT?;
+            
+/*
+REGISTRO TIPO MEDICIONES
+~M | [ CODIGO_PADRE \ ] CODIGO_HIJO | { POSICION \ } | MEDICION_TOTAL | { TIPO \ COMENTARIO \ UNIDADES \ LONGITUD \ LATITUD \ ALTURA \ } | [ETIQUETA] |
+ej:
+~M | 502mar#        \   PP14052     | 1\1\1\1\2\     | 0              |                                                                  |
+~M | 502mar#        \   PP07015     | 1\1\1\1\3\     | 3.57           |        \ 0 a 7      \ 3        \ 0.21     \         \        \   |
+*/
+mMeasurement: 'M' FIELDSEP ( mParentCode SUBFIELDSEP )+ mChildCode FIELDSEP ( mPosition SUBFIELDSEP )* FIELDSEP mTotalMeasurement FIELDSEP (mType? SUBFIELDSEP mComment? SUBFIELDSEP mUnits? SUBFIELDSEP mLongitude? SUBFIELDSEP mLatitude? SUBFIELDSEP mHeight? SUBFIELDSEP)* FIELDSEP (mLabel FIELDSEP)?;
+
+mParentCode: TEXT;
+
+mChildCode: TEXT;
+
+mPosition: TEXT;
+
+mTotalMeasurement: TEXT;
+
+mLabel: TEXT;
+
+mType: TEXT;
+mComment: TEXT;
+mUnits: TEXT;
+mLongitude: TEXT;
+mLatitude: TEXT;
+mHeight: TEXT;
 
 /**** LEXER ****/
 
@@ -210,12 +300,11 @@ Se ignorarán los caracteres blancos (32), tabuladores (9) y de fin de línea
 WS : [\r\n]+ -> skip;
 
 REGSEP     : (' ' | '\t' | '\n' | '\r')* '~' ;  // register separator
-
 FIELDSEP   : (' ' | '\t' | '\n' | '\r')* '|' ;  // field separator
-
 SUBFIELDSEP: (' ' | '\t' | '\n' | '\r')* '\\' ; // subfield separator
 
-// NOTA: no cambiar el orden de INT, FLOAT y TEXT, ya que uno contiene 
+
+// NOTA: no cambiar el orden de TEXT, FLOAT y TEXT, ya que uno contiene 
 // al otro y se emplean por orden de aparición.
 
 /*
@@ -241,11 +330,11 @@ Ejemplos:
 
             401                  abril de 2001
 
-Nota: usamos la misma definición que INT, y ya se procesa desde código, pues será
+Nota: usamos la misma definición que TEXT, y ya se procesa desde código, pues será
 muy difícil distinguir en algunos casos.
 */
 
-INT: [0-9]+;
+// TEXT: [0-9]+ ('.' [0-9]+)?;
 
 /*
 El juego de caracteres a emplear en los campos CODIGO será el definido por 
