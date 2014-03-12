@@ -37,14 +37,10 @@ INFORMACION en alguno de sus campos y, por supuesto, el CODIGO de referencia.
 Para anular un campo numérico deberá aparecer explícitamente el valor 0 (cero).
 Para anular un campo alfanumérico deberá aparecer explícitamente el ROTULO NUL.
 */
-record: 'V' info
-      | 'K' coefficient
-      | 'C' concept
+record: 'V' vInfo
+      | 'K' kCoefficient
+      | 'C' cConcept
       ;
-//        | text
-//        | breakdown
-//        | measurement
-//        ;
 
 /*
 REGISTRO TIPO PROPIEDAD Y VERSION
@@ -53,27 +49,27 @@ ej:
 ~V   | CYPE INGENIEROS, S.A. | FIEBDC-3/2004                  | ARQUIMEDES           |                                            | ANSI                 | Certificación en curso | 3                    | 8                         |                          |
 NOTA: Ignora posibles campos adicionales añadidos en versiones posteriores
 */
-info: FIELDSEP fileProperty? FIELDSEP versionFormat (SUBFIELDSEP TEXT)? FIELDSEP generatedBy? FIELDSEP header? FIELDSEP charset? FIELDSEP comments? FIELDSEP infoType? FIELDSEP certNum? FIELDSEP certDate? FIELDSEP (TEXT FIELDSEP)*;
+vInfo: FIELDSEP vFileProperty? FIELDSEP vVersionFormat (SUBFIELDSEP TEXT)? FIELDSEP vGeneratedBy? FIELDSEP vHeader? FIELDSEP vCharset? FIELDSEP vComments? FIELDSEP vInfoType? FIELDSEP vCertNum? FIELDSEP vCertDate? FIELDSEP (TEXT FIELDSEP)*;
       
 /*
 PROPIEDAD_ARCHIVO: Redactor de la base de datos u obra, fecha, …
 */
-fileProperty: TEXT;
+vFileProperty: TEXT;
 
 /*
 VERSION_FORMATO: VERSION del formato del archivo, la actual es FIEBDC-3/2004
 */
-versionFormat: TEXT;
+vVersionFormat: TEXT;
 
 /*
 PROGRAMA_EMISION: Programa y/o empresa que genera los ficheros en formato BC3.
 */
-generatedBy: TEXT;
+vGeneratedBy: TEXT;
 
 /*
 CABECERA: Título general de los ROTULOS_IDENTIFICACION.
 */
-header:  TEXT;
+vHeader:  TEXT;
 
 /*
 JUEGO_CARACTERES: Asigna si el juego de caracteres a emplear es el definido 
@@ -82,21 +78,18 @@ Windows, cuyo identificador será ANSI. En caso de que dicho campo esté vacío
 se interpretará, por omisión, que el juego de caracteres a utilizar será el 
 850 por compatibilidad con versiones anteriores.
 */
-charset: '850'
+vCharset: '850'
        | '437'
        | 'ANSI'
        | '';
 /*
 COMENTARIO: Contenido del archivo (base, obra...).
 */
-comments: TEXT;
+vComments: TEXT;
 
-/*
-TODO
-*/
-infoType: INT;
-certNum: INT;
-certDate: INT;
+vInfoType: INT;
+vCertNum: INT;
+vCertDate: INT;
 
 /*
 REGISTRO TIPO COEFICIENTES.
@@ -105,13 +98,13 @@ ej:
 ~K |      \ 2  \ 3  \ 3  \ 2  \ 2  \ 2  \ 2  \ EUR    \   | 0  \ 13 \ 6  \      \ 21  |       \ 2  \     \     \ 3   \     \ 2   \ 2  \ 2   \    \ 2  \ 3  \ EUR    \   |       |
 TODO: arreglar si es necesario
 */
-coefficient: FIELDSEP (INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP TEXT? SUBFIELDSEP)* FIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? FIELDSEP (INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP TEXT? SUBFIELDSEP)* FIELDSEP INT? FIELDSEP;
+kCoefficient: FIELDSEP (INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP TEXT? SUBFIELDSEP)* FIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? FIELDSEP (INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP INT? SUBFIELDSEP TEXT? SUBFIELDSEP)* FIELDSEP INT? FIELDSEP;
 
 /*
 REGISTRO TIPO CONCEPTO
 ~C | CODIGO { \ CODIGO } | [ UNIDAD ] | [ RESUMEN ] | { PRECIO \ } | { FECHA \ } | [ TIPO ] |
 */
-concept: FIELDSEP ccode (SUBFIELDSEP TEXT)* FIELDSEP cunit? FIELDSEP csummary? FIELDSEP (cprice? | (cprice SUBFIELDSEP)+) FIELDSEP (cdate? | (cdate SUBFIELDSEP?)+) FIELDSEP ctype FIELDSEP;
+cConcept: FIELDSEP cCode (SUBFIELDSEP TEXT)* FIELDSEP cUnit? FIELDSEP cSummary? FIELDSEP (cPrice? | (cPrice SUBFIELDSEP)+) FIELDSEP (cDate? | (cDate SUBFIELDSEP?)+) FIELDSEP cType FIELDSEP;
      
 /*
 CODIGO: CODIGO del concepto descrito. Un concepto puede tener varios CODIGOs 
@@ -132,14 +125,14 @@ Si un código cuenta con un carácter '#' intercalado, se entenderá que
 corresponde al conjunto CODIGO_ENTIDAD # CODIGO_CONCEPTO definido en el 
 registro de Tipo Relación Comercial (registro ~O) o en la función BdcComercCodigo.
 */
-ccode: TEXT;
+cCode: TEXT;
 
 /*
 UNIDAD: Unidad de medida. Existe una relación de unidades de medida recomendadas,
 elaborada por la Asociación de Redactores de Bases de Datos de CONSTRUCCION. 
 Véase el Anexo 7 sobre Unidades de Medida.
 */
-cunit: 'm'   //metro
+cUnit: 'm'   //metro
      | 'm2'  //metro cuadrado
      | 'm3'  //metro cúbico
      | 'kg'  //kilogramo
@@ -163,7 +156,7 @@ cunit: 'm'   //metro
 RESUMEN: Resumen del texto descriptivo. Cada soporte indicará el número de
 caracteres que admite en su campo resumen. Se recomienda un máximo de 64 caracteres.
 */
-csummary: TEXT;
+cSummary: TEXT;
 
 /*
 PRECIO: Precio del concepto. Un concepto puede tener varios precios alternativos
@@ -181,7 +174,6 @@ capítulo y concepto raíz de una Obra o Presupuesto. Como excepción a esta reg
 está el intercambio de mediciones no estructuradas (véase la descripción del
 registro Tipo Mediciones, ~M).
 */
-//cprice: FLOAT;
 cprice: TEXT;
        
 /*
@@ -189,7 +181,7 @@ FECHA: Fecha de la última actualización del precio. Cuando haya más de una fe
 se asignarán secuencialmente a cada precio definido, si hay más precios que
 fechas, los precios sin su correspondiente fecha tomarán la última fecha definida.
 */
-cdate: INT;
+cDate: INT;
 
 /*
 TIPO: Tipo de concepto, Inicialmente se reservan los siguientes tipos:
@@ -199,30 +191,11 @@ la CNC en índices y fórmulas polinómicas de revisión de precios así como lo
 aconsejados por la Asociación de Redactores de Bases de Datos de la Construcción.
 En el Anexo 4 aparecen los tipos actualmente vigentes.
 */
-ctype: '0'
-     | '1'
-     | '2'
-     | '3'
-     ;
+cType: INT;
 
-/*
-REGISTRO TIPO TEXTO
-~T | CODIGO_CONCEPTO | TEXTO_DESCRIPTIVO |
-*/
-//text: 
 
-/*
-REGISTRO TIPO DESCOMPOSICION
-~D | CODIGO_PADRE | < CODIGO_HIJO \ [ FACTOR ] \ [ RENDIMIENTO ] \ > |
-*/
-//breakdown:
+/**** LEXER ****/
 
-/*
-REGISTRO TIPO MEDICIONES
-~M | [ CODIGO_PADRE \ ] CODIGO_HIJO | { POSICION \ } | MEDICION_TOTAL | { TIPO \ COMENTARIO \ UNIDADES \ LONGITUD \ LATITUD \ ALTURA \ } | [ETIQUETA] |
-*/
-//measurement:
-  
 /*
 El fin de línea será el ESTANDAR de los archivos MS-DOS (ASCII-13 y ASCII-10).
 El fin de archivo se marcará según el mismo ESTANDAR (ASCII-26). El único 
@@ -273,14 +246,6 @@ muy difícil distinguir en algunos casos.
 */
 
 INT: [0-9]+;
-
-/*
-//FLOAT: DIGIT+ '.' DIGIT+ // match 1. 39. 3.14159 etc...
-//     | '.' DIGIT+        // match .1 .14159
-//     ;
-*/
-
-//fragment DIGIT: [0-9];
 
 /*
 El juego de caracteres a emplear en los campos CODIGO será el definido por 
