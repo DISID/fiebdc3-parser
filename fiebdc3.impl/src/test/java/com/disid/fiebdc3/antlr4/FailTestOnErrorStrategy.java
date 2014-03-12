@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/copyleft/gpl.html>.
  */
 
-package com.disid.fiebdc3.impl.antlr4;
+package com.disid.fiebdc3.antlr4;
 
 import org.antlr.v4.runtime.DefaultErrorStrategy;
 import org.antlr.v4.runtime.Parser;

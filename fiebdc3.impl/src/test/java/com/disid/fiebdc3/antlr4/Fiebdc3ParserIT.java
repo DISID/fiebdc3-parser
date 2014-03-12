@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/copyleft/gpl.html>.
  */
 
-package com.disid.fiebdc3.impl.antlr4;
+package com.disid.fiebdc3.antlr4;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.FileReader;
@@ -46,29 +46,29 @@ public class Fiebdc3ParserIT {
      */
     @Before
     public void setUp() throws Exception {
-	URL testResource = this.getClass().getClassLoader()
-		.getResource("test.bc3");
-	File testFile = new File(testResource.getPath());
-	// create a CharStream that reads from standard input
-	ANTLRInputStream input = new ANTLRInputStream(new FileReader(testFile));
-	// create a lexer that feeds off of input CharStream
-	Fiebdc3Lexer lexer = new Fiebdc3Lexer(input) {
-	    @Override
-	    public void recover(LexerNoViableAltException e) {
-		throw new RuntimeException(e); // Bail out
-	    }
-	};
-	// create a buffer of tokens pulled from the lexer
-	CommonTokenStream tokens = new CommonTokenStream(lexer);
-	parser = new Fiebdc3Parser(tokens);
-	errorStrategy = new FailTestOnErrorStrategy();
-	parser.setErrorHandler(errorStrategy);
+        URL testResource = this.getClass().getClassLoader()
+                .getResource("test.bc3");
+        File testFile = new File(testResource.getPath());
+        // create a CharStream that reads from standard input
+        ANTLRInputStream input = new ANTLRInputStream(new FileReader(testFile));
+        // create a lexer that feeds off of input CharStream
+        Fiebdc3Lexer lexer = new Fiebdc3Lexer(input) {
+            @Override
+            public void recover(LexerNoViableAltException e) {
+                throw new RuntimeException(e); // Bail out
+            }
+        };
+        // create a buffer of tokens pulled from the lexer
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        parser = new Fiebdc3Parser(tokens);
+        errorStrategy = new FailTestOnErrorStrategy();
+        parser.setErrorHandler(errorStrategy);
     }
 
     @Test
     public void testParser() {
-	ParseTree tree = parser.database(); // begin parsing at database rule
-	System.out.println(tree.toStringTree(parser)); // print LISP-style tree
-	assertFalse("Found parse errors", errorStrategy.isHasErrors());
+        ParseTree tree = parser.database(); // begin parsing at database rule
+        System.out.println(tree.toStringTree(parser)); // print LISP-style tree
+        assertFalse("Found parse errors", errorStrategy.isHasErrors());
     }
 }

@@ -18,6 +18,6 @@
 
 /**
  * Package for the antlr4 based parser.
- * @author DiSiD
+ * @author DiSiD Team
  */
-package com.disid.fiebdc3.impl.antlr4;
+package com.disid.fiebdc3.antlr4;
