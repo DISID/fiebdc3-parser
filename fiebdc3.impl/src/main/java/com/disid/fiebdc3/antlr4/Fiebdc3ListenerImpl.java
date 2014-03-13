@@ -27,6 +27,14 @@ import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CPriceContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CSummaryContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CTypeContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CUnitContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DBreakdownContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DChildCodeContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DFactorContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DParentCodeContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DPerformanceContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.TConceptCodeContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.TDescriptionContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.TTextContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VCertDateContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VCertNumContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VCharsetContext;
@@ -39,107 +47,174 @@ import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VVersionFormatContext;
 
 /**
  * Listener for the Fiebdc3 parser events.
+ * 
  * @author DiSiD Team
  */
 public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
-    
+
     private Database database = new Database();
-    
+
     private Concept currentConcept;
-    
-    ////////////////
+    private Concept currentChildConcept;
+
+    // //////////////
     // V register //
-    ////////////////
+    // //////////////
     @Override
     public void enterVCertDate(VCertDateContext ctx) {
-        database.setCertDate(ctx.TEXT().getText());
+        database.setCertDate(ctx.getText());
     }
-    
+
     @Override
     public void enterVCertNum(VCertNumContext ctx) {
-        database.setCertNum(Integer.valueOf(ctx.TEXT().getText()));
+        database.setCertNum(Integer.valueOf(ctx.getText()));
     }
-    
+
     @Override
     public void enterVCharset(VCharsetContext ctx) {
         database.setCharset(ctx.getText());
     }
-    
+
     @Override
     public void enterVComments(VCommentsContext ctx) {
-        database.setComments(ctx.TEXT().getText());
+        database.setComments(ctx.getText());
     }
-    
+
     @Override
     public void enterVFileProperty(VFilePropertyContext ctx) {
-        database.setFileProperty(ctx.TEXT().getText());
+        database.setFileProperty(ctx.getText());
     }
-    
+
     @Override
     public void enterVGeneratedBy(VGeneratedByContext ctx) {
-        database.setGeneratedBy(ctx.TEXT().getText());
+        database.setGeneratedBy(ctx.getText());
     }
-    
+
     @Override
     public void enterVHeader(VHeaderContext ctx) {
-        database.setHeader(ctx.TEXT().getText());
+        database.setHeader(ctx.getText());
     }
-    
+
     @Override
     public void enterVInfoType(VInfoTypeContext ctx) {
-        database.setInfoType(Integer.valueOf(ctx.TEXT().getText()));
+        database.setInfoType(Integer.valueOf(ctx.getText()));
     }
-    
+
     @Override
     public void enterVVersionFormat(VVersionFormatContext ctx) {
-        database.setFileFormat(ctx.TEXT().getText());
+        database.setFileFormat(ctx.getText());
     }
-    
-    ////////////////
+
+    // //////////////
     // C register //
-    ////////////////
-    
-    @Override
-    public void enterCConcept(CConceptContext ctx) {
-        currentConcept = new Concept();
-    }
-    
+    // //////////////
+
     @Override
     public void enterCCode(CCodeContext ctx) {
-        String code = ctx.TEXT().getText();
-        currentConcept.setCode(code);
-        
-        if (code.endsWith("##")) { // Root concept
-            database.setRootConcept(currentConcept);
+        String code = ctx.getText().trim();
+        currentConcept = database.getConcept(code);
+        if (currentConcept == null) {
+            if (code.endsWith("##")) {
+                currentConcept = database.addRootConcept(code);
+            } else {
+                currentConcept = database.addOrphanConcept(code);
+            }
         }
     }
-    
+
     @Override
     public void enterCDate(CDateContext ctx) {
-        currentConcept.setLastUpdate(ctx.TEXT().getText());
+        currentConcept.setLastUpdate(ctx.getText());
     }
-    
+
     @Override
     public void enterCPrice(CPriceContext ctx) {
-        currentConcept.setPrice(ctx.TEXT().getText());
+        currentConcept.setPrice(ctx.getText());
     }
 
     @Override
     public void enterCSummary(CSummaryContext ctx) {
-        currentConcept.setSummary(ctx.TEXT().getText());
+        currentConcept.setSummary(ctx.getText());
     }
-    
+
     @Override
     public void enterCType(CTypeContext ctx) {
-        currentConcept.setType(ctx.TEXT().getText());
+        currentConcept.setType(ctx.getText());
     }
-    
+
     @Override
     public void enterCUnit(CUnitContext ctx) {
-        currentConcept.setMeasureUnit(ctx.TEXT().getText());
+        currentConcept.setMeasureUnit(ctx.getText());
     }
-    
+
+    @Override
+    public void exitCConcept(CConceptContext ctx) {
+        currentConcept = null;
+    }
+
+    // //////////////
+    // D register //
+    // //////////////
+
+    @Override
+    public void enterDParentCode(DParentCodeContext ctx) {
+        String code = ctx.getText().trim();
+        currentConcept = database.getConcept(code);
+        if (currentConcept == null) {
+            currentConcept = database.addOrphanConcept(code);
+        }
+    }
+
+    @Override
+    public void enterDChildCode(DChildCodeContext ctx) {
+        String childCode = ctx.getText();
+        currentChildConcept = currentConcept.getConcept(childCode);
+        if (currentChildConcept == null) {
+            currentChildConcept = database.addChildConcept(childCode,
+                    currentConcept);
+        }
+    }
+
+    @Override
+    public void enterDFactor(DFactorContext ctx) {
+        currentChildConcept.setFactor(ctx.getText());
+    }
+
+    @Override
+    public void enterDPerformance(DPerformanceContext ctx) {
+        currentChildConcept.setPerformance(ctx.getText());
+    }
+
+    @Override
+    public void exitDBreakdown(DBreakdownContext ctx) {
+        currentConcept = null;
+        currentChildConcept = null;
+    }
+
     public Database getDatabase() {
         return database;
+    }
+
+    // //////////////
+    // T register //
+    // //////////////
+
+    @Override
+    public void enterTConceptCode(TConceptCodeContext ctx) {
+        String code = ctx.getText().trim();
+        currentConcept = database.getConcept(code);
+        if (currentConcept == null) {
+            currentConcept = database.addOrphanConcept(code);
+        }
+    }
+
+    @Override
+    public void enterTDescription(TDescriptionContext ctx) {
+        currentConcept.setDescription(ctx.getText());
+    }
+
+    @Override
+    public void exitTText(TTextContext ctx) {
+        currentConcept = null;
     }
 }

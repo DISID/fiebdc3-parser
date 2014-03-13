@@ -19,11 +19,10 @@
 package com.disid.fiebdc3;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
- * Concept of the Fiebdc 3 database.
+ * Concept of a Fiebdc 3 database.
  * 
  * @author DiSiD Team
  */
@@ -41,14 +40,30 @@ public class Concept {
 
     private String type;
 
+    private String factor;
+
+    private String performance;
+
+    private String description;
+
     private List<Concept> childConcepts;
+
+    /**
+     * Creates a concept with the given code.
+     * 
+     * @param code
+     *            which uniquely identifies a concept
+     */
+    Concept(String code) {
+        this.code = cleanCode(code);
+    }
 
     public String getCode() {
         return code;
     }
 
     public void setCode(String code) {
-        this.code = code;
+        this.code = cleanCode(code);
     }
 
     public String getMeasureUnit() {
@@ -91,11 +106,35 @@ public class Concept {
         this.type = type;
     }
 
-    public Iterator<Concept> getChildConcepts() {
-        return childConcepts == null ? null : childConcepts.iterator();
+    public String getFactor() {
+        return factor;
     }
 
-    public boolean addChildConcept(Concept concept) {
+    public void setFactor(String factor) {
+        this.factor = factor;
+    }
+
+    public String getPerformance() {
+        return performance;
+    }
+
+    public void setPerformance(String performance) {
+        this.performance = performance;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Iterable<Concept> getChildConcepts() {
+        return childConcepts;
+    }
+
+    boolean addChildConcept(Concept concept) {
         if (childConcepts == null) {
             childConcepts = new ArrayList<Concept>();
         }
@@ -103,11 +142,29 @@ public class Concept {
     }
 
     public Concept getConcept(String code) {
-        if (this.code != null && this.code.equals(code)) {
+        String parentCode = code;
+        String childCode = code;
+        int pathPosition = code.indexOf('\\');
+        if (pathPosition > 0) {
+            parentCode = code.substring(0, pathPosition);
+            childCode = code.substring(pathPosition + 1);
+            if (isMyCode(parentCode)) {
+                return getChildConcept(childCode);
+            }
+            return null;
+        }
+
+        if (isMyCode(parentCode)) {
             return this;
-        } else if (childConcepts != null) {
+        } else {
+            return getChildConcept(childCode);
+        }
+    }
+
+    private Concept getChildConcept(String childCode) {
+        if (childConcepts != null) {
             for (Concept childConcept : childConcepts) {
-                Concept concept = childConcept.getConcept(code);
+                Concept concept = childConcept.getConcept(childCode);
                 if (concept != null) {
                     return concept;
                 }
@@ -116,11 +173,26 @@ public class Concept {
         return null;
     }
 
+    private boolean isMyCode(String code) {
+        String cleanedCode = cleanCode(code);
+
+        return (this.code != null && this.code.equals(cleanedCode));
+    }
+
+    private String cleanCode(String code) {
+        while (code.endsWith("#")) {
+            code = code.substring(0, code.length() - 1);
+        }
+        return code;
+    }
+
     @Override
     public String toString() {
         return "Concept {" + "Code: " + code + ", Summary: " + summary
                 + ", Type: " + type + ", Measure unit: " + measureUnit
                 + ", Price: " + price + ", Last update: " + lastUpdate
-                + ", Child concepts: " + childConcepts + "}";
+                + ", Factor: " + factor + ", Performance: " + performance
+                + ", Description: " + description
+                + ", Child concepts: \n\t" + childConcepts + "}";
     }
 }
