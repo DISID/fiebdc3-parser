@@ -62,7 +62,7 @@ public class AntlrFiebdc3ServiceIT {
         
         assertFalse(database.hasOrphanedConcepts());
 
-        System.out.println("Parsed file: " + database);
+        // System.out.println("Parsed file: " + database);
     }
 
 }

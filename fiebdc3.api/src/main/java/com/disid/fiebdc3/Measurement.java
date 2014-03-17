@@ -32,9 +32,9 @@ public class Measurement {
 
     String concept;
 
-    List<String> position = new ArrayList<String>();
+    List<Integer> position = new ArrayList<Integer>();
 
-    String total;
+    Float total;
 
     List<Line> lines = new ArrayList<Line>();
 
@@ -56,19 +56,19 @@ public class Measurement {
         this.concept = concept;
     }
 
-    public List<String> getPosition() {
+    public List<Integer> getPosition() {
         return position;
     }
 
-    public void addPosition(String position) {
+    public void addPosition(Integer position) {
         this.position.add(position);
     }
 
-    public String getTotal() {
+    public Float getTotal() {
         return total;
     }
 
-    public void setTotal(String total) {
+    public void setTotal(Float total) {
         this.total = total;
     }
 
@@ -100,23 +100,23 @@ public class Measurement {
 
     public static class Line {
 
-        String type;
+        Integer type;
 
         String comment;
 
-        String units;
+        Float units;
 
-        String length;
+        Float length;
 
-        String width;
+        Float width;
 
-        String height;
+        Float height;
 
-        public String getType() {
+        public Integer getType() {
             return type;
         }
 
-        public void setType(String type) {
+        public void setType(Integer type) {
             this.type = type;
         }
 
@@ -128,35 +128,35 @@ public class Measurement {
             this.comment = comment;
         }
 
-        public String getUnits() {
+        public Float getUnits() {
             return units;
         }
 
-        public void setUnits(String units) {
+        public void setUnits(Float units) {
             this.units = units;
         }
 
-        public String getLength() {
+        public Float getLength() {
             return length;
         }
 
-        public void setLength(String length) {
+        public void setLength(Float length) {
             this.length = length;
         }
 
-        public String getWidth() {
+        public Float getWidth() {
             return width;
         }
 
-        public void setWidth(String width) {
+        public void setWidth(Float width) {
             this.width = width;
         }
 
-        public String getHeight() {
+        public Float getHeight() {
             return height;
         }
 
-        public void setHeight(String height) {
+        public void setHeight(Float height) {
             this.height = height;
         }
 

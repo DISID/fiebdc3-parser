@@ -18,6 +18,7 @@
 
 package com.disid.fiebdc3;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -32,6 +33,30 @@ import java.util.Set;
  * 
  */
 public class Database {
+
+    public enum Charset {
+        ANSI("ANSI"), C850("850"), C437("437");
+        
+        private final String code;
+        
+        private Charset(String code) {
+            this.code = code;
+        }
+
+        @Override
+        public String toString() {
+            return code;
+        }
+
+        public static Charset parseCharset(String code) {
+            for (Charset c : Charset.values()) {
+                if (c.code.equals(code)) {
+                    return c;
+                }
+            }
+            return null;
+        }
+    }
 
     /**
      * PROPIEDAD_ARCHIVO: Redactor de la base de datos u obra, fecha, …
@@ -62,7 +87,7 @@ public class Database {
      * campo esté vacío se interpretará, por omisión, que el juego de caracteres
      * a utilizar será el 850 por compatibilidad con versiones anteriores.
      */
-    private String charset = "ANSI";
+    private Charset charset = Charset.C850;
 
     /**
      * COMENTARIO: Contenido del archivo (base, obra...).
@@ -89,7 +114,7 @@ public class Database {
      * Certificación. La fecha se definirá con el mismo formato que el campo
      * DDMMAAAA de este registro
      */
-    private String certDate;
+    private Date certDate;
 
     private Concept rootConcept;
 
@@ -129,11 +154,11 @@ public class Database {
         this.header = header;
     }
 
-    public String getCharset() {
+    public Charset getCharset() {
         return charset;
     }
 
-    public void setCharset(String charset) {
+    public void setCharset(Charset charset) {
         this.charset = charset;
     }
 
@@ -161,11 +186,11 @@ public class Database {
         this.certNum = certNum;
     }
 
-    public String getCertDate() {
+    public Date getCertDate() {
         return certDate;
     }
 
-    public void setCertDate(String certDate) {
+    public void setCertDate(Date certDate) {
         this.certDate = certDate;
     }
 

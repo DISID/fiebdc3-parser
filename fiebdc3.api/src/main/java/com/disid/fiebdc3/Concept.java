@@ -19,6 +19,7 @@
 package com.disid.fiebdc3;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -34,15 +35,15 @@ public class Concept {
 
     private String summary;
 
-    private String price;
+    private List<Float> prices = new ArrayList<Float>();
 
-    private String lastUpdate;
+    private List<Date> lastUpdates = new ArrayList<Date>();
 
     private String type;
 
-    private String factor;
+    private Float factor = 1.0f;
 
-    private String performance;
+    private Float performance = 1.0f;
 
     private String description;
 
@@ -84,20 +85,38 @@ public class Concept {
         this.summary = summary;
     }
 
-    public String getPrice() {
-        return price;
+    public List<Float> getPrices() {
+        return prices;
     }
 
-    public void setPrice(String price) {
-        this.price = price;
+    public void addPrice(Float price) {
+        this.prices.add(price);
     }
 
-    public String getLastUpdate() {
-        return lastUpdate;
+    /**
+     * Return the main (first) price of the concept.
+     * 
+     * @return the main (first) price of the concept
+     */
+    public Float getMainPrice() {
+        return prices.get(0);
     }
 
-    public void setLastUpdate(String lastUpdate) {
-        this.lastUpdate = lastUpdate;
+    public List<Date> getLastUpdates() {
+        return lastUpdates;
+    }
+
+    public void addLastUpdate(Date lastUpdate) {
+        this.lastUpdates.add(lastUpdate);
+    }
+
+    /**
+     * Return the main (first) lastUpdate of the concept.
+     * 
+     * @return the main (first) lastUpdate of the concept
+     */
+    public Date getMainLastUpdate() {
+        return lastUpdates.get(0);
     }
 
     public String getType() {
@@ -108,19 +127,19 @@ public class Concept {
         this.type = type;
     }
 
-    public String getFactor() {
+    public Float getFactor() {
         return factor;
     }
 
-    public void setFactor(String factor) {
+    public void setFactor(Float factor) {
         this.factor = factor;
     }
 
-    public String getPerformance() {
+    public Float getPerformance() {
         return performance;
     }
 
-    public void setPerformance(String performance) {
+    public void setPerformance(Float performance) {
         this.performance = performance;
     }
 
@@ -200,7 +219,7 @@ public class Concept {
     public String toString() {
         return "Concept {" + "Code: " + code + ", Summary: " + summary
                 + ", Type: " + type + ", Measure unit: " + measureUnit
-                + ", Price: " + price + ", Last update: " + lastUpdate
+                + ", Prices: " + prices + ", Last updates: " + lastUpdates
                 + ", Factor: " + factor + ", Performance: " + performance
                 + ", Description: " + description
                 + ", Measurement: " + measurement

@@ -18,8 +18,11 @@
 
 package com.disid.fiebdc3.antlr4;
 
+import java.util.Date;
+
 import com.disid.fiebdc3.Concept;
 import com.disid.fiebdc3.Database;
+import com.disid.fiebdc3.Database.Charset;
 import com.disid.fiebdc3.Measurement;
 import com.disid.fiebdc3.Measurement.Line;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CCodeContext;
@@ -79,17 +82,20 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     // //////////////
     @Override
     public void enterVCertDate(VCertDateContext ctx) {
-        database.setCertDate(ctx.getText());
+        String certDate = ctx.getText().trim();
+        Date value = ParseUtils.parseDate(certDate);
+        database.setCertDate(value);
     }
 
     @Override
     public void enterVCertNum(VCertNumContext ctx) {
-        database.setCertNum(Integer.valueOf(ctx.getText()));
+        database.setCertNum(Integer.valueOf(ctx.getText().trim()));
     }
 
     @Override
     public void enterVCharset(VCharsetContext ctx) {
-        database.setCharset(ctx.getText());
+        Charset value = Charset.parseCharset(ctx.getText().trim());
+        database.setCharset(value);
     }
 
     @Override
@@ -99,27 +105,29 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
 
     @Override
     public void enterVFileProperty(VFilePropertyContext ctx) {
-        database.setFileProperty(ctx.getText());
+        database.setFileProperty(ctx.getText().trim());
     }
 
     @Override
     public void enterVGeneratedBy(VGeneratedByContext ctx) {
-        database.setGeneratedBy(ctx.getText());
+        database.setGeneratedBy(ctx.getText().trim());
     }
 
     @Override
     public void enterVHeader(VHeaderContext ctx) {
-        database.setHeader(ctx.getText());
+        database.setHeader(ctx.getText().trim());
     }
 
     @Override
     public void enterVInfoType(VInfoTypeContext ctx) {
-        database.setInfoType(Integer.valueOf(ctx.getText()));
+        String infoType = ctx.getText().trim();
+        Integer value = Integer.valueOf(infoType);
+        database.setInfoType(value);
     }
 
     @Override
     public void enterVVersionFormat(VVersionFormatContext ctx) {
-        database.setFileFormat(ctx.getText());
+        database.setFileFormat(ctx.getText().trim());
     }
 
     // //////////////
@@ -140,27 +148,31 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
 
     @Override
     public void enterCDate(CDateContext ctx) {
-        currentConcept.setLastUpdate(ctx.getText());
+        String certDate = ctx.getText().trim();
+        Date value = ParseUtils.parseDate(certDate);
+        currentConcept.addLastUpdate(value);
     }
 
     @Override
     public void enterCPrice(CPriceContext ctx) {
-        currentConcept.setPrice(ctx.getText());
+        String price = ctx.getText().trim();
+        Float value = Float.parseFloat(price);
+        currentConcept.addPrice(value);
     }
 
     @Override
     public void enterCSummary(CSummaryContext ctx) {
-        currentConcept.setSummary(ctx.getText());
+        currentConcept.setSummary(ctx.getText().trim());
     }
 
     @Override
     public void enterCType(CTypeContext ctx) {
-        currentConcept.setType(ctx.getText());
+        currentConcept.setType(ctx.getText().trim());
     }
 
     @Override
     public void enterCUnit(CUnitContext ctx) {
-        currentConcept.setMeasureUnit(ctx.getText());
+        currentConcept.setMeasureUnit(ctx.getText().trim());
     }
 
     @Override
@@ -179,7 +191,7 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
 
     @Override
     public void enterDChildCode(DChildCodeContext ctx) {
-        String childCode = ctx.getText();
+        String childCode = ctx.getText().trim();
         currentChildConcept = currentConcept.getConcept(childCode);
         if (currentChildConcept == null) {
             currentChildConcept = database.addChildConcept(childCode,
@@ -189,12 +201,18 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
 
     @Override
     public void enterDFactor(DFactorContext ctx) {
-        currentChildConcept.setFactor(ctx.getText());
+        String text = ctx.getText().trim();
+        if (text.length() > 0) {
+            Float value = Float.parseFloat(text);
+            currentChildConcept.setFactor(value);
+        }
     }
 
     @Override
     public void enterDPerformance(DPerformanceContext ctx) {
-        currentChildConcept.setPerformance(ctx.getText());
+        String text = ctx.getText().trim();
+        Float value = Float.parseFloat(text);
+        currentChildConcept.setPerformance(value);
     }
 
     @Override
@@ -246,12 +264,16 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
 
     @Override
     public void enterMPosition(MPositionContext ctx) {
-        currentMeasurement.addPosition(ctx.getText());
+        String text = ctx.getText().trim();
+        Integer value = Integer.parseInt(text);
+        currentMeasurement.addPosition(value);
     }
 
     @Override
     public void enterMTotalMeasurement(MTotalMeasurementContext ctx) {
-        currentMeasurement.setTotal(ctx.getText());
+        String text = ctx.getText().trim();
+        Float value = Float.parseFloat(text);
+        currentMeasurement.setTotal(value);
     }
 
     @Override
@@ -261,7 +283,9 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
 
     @Override
     public void enterMType(MTypeContext ctx) {
-        currentLine.setType(ctx.getText());
+        String text = ctx.getText().trim();
+        Integer value = Integer.parseInt(text);
+        currentLine.setType(value);
     }
 
     @Override
@@ -271,22 +295,30 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
 
     @Override
     public void enterMUnits(MUnitsContext ctx) {
-        currentLine.setUnits(ctx.getText());
+        String text = ctx.getText();
+        Float value = Float.parseFloat(text);
+        currentLine.setUnits(value);
     }
 
     @Override
     public void enterMLongitude(MLongitudeContext ctx) {
-        currentLine.setLength(ctx.getText());
+        String text = ctx.getText().trim();
+        Float value = Float.parseFloat(text);
+        currentLine.setLength(value);
     }
 
     @Override
     public void enterMLatitude(MLatitudeContext ctx) {
-        currentLine.setWidth(ctx.getText());
+        String text = ctx.getText().trim();
+        Float value = Float.parseFloat(text);
+        currentLine.setWidth(value);
     }
 
     @Override
     public void enterMHeight(MHeightContext ctx) {
-        currentLine.setHeight(ctx.getText());
+        String text = ctx.getText().trim();
+        Float value = Float.parseFloat(text);
+        currentLine.setHeight(value);
     }
 
     @Override
@@ -296,7 +328,7 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
 
     @Override
     public void enterMLabel(MLabelContext ctx) {
-        currentMeasurement.setLabel(ctx.getText());
+        currentMeasurement.setLabel(ctx.getText().trim());
     }
 
     @Override
