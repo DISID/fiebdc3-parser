@@ -16,10 +16,36 @@ Also only the main register types have been implemented:
 
 Also some fields into each register are ignored, as our main initial objetive is to import the .bc3 files generated with the current version of the Arquimedes application, and only the minimal needed data.
 
-Usage
-------
+Installation
+---------------
 
 The project is divided in two modules: *fiebdc3.api* and *fiebdc3.impl*. The first one is the API, and the second one is the ANTLR4 based implementation.
+
+To compile from source just checkout the root folder project and perform a *mvn install*.
+
+To use in your own project, just add the following dependencies to your *pom.xml* *TODO: upload to gvNIX maven repo and include here*:
+
+```xml
+		<dependency>
+			<groupId>com.disid</groupId>
+			<artifactId>fiebdc3.api</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.disid</groupId>
+			<artifactId>fiebdc3.impl</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+```
+
+You can change the scope of the implementation to *runtime* if you don't instantiate the implementation in your code.
+
+
+Usage
+------
 
 The API entry point is the *Fiebdc3Service*. Ex:
 
@@ -50,24 +76,3 @@ database
     
 Take a look at the Javadoc of the parser API for more information. *TODO: link to javadoc*.
 
-To compile from source just checkout the root folder project and perform a *mvn install*.
-
-To use in your own project, just add the following dependencies to your *pom.xml* *TODO: upload to gvNIX maven repo and include here*:
-
-```xml
-		<dependency>
-			<groupId>com.disid</groupId>
-			<artifactId>fiebdc3.api</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.disid</groupId>
-			<artifactId>fiebdc3.impl</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-```
-
-You can change the scope of the implementation to *runtime* if you don't instantiate the implementation in your code.
