@@ -47,6 +47,8 @@ public class Concept {
     private String description;
 
     private List<Concept> childConcepts;
+    
+    private Measurement measurement;
 
     /**
      * Creates a concept with the given code.
@@ -173,6 +175,14 @@ public class Concept {
         return null;
     }
 
+    public Measurement getMeasurement() {
+        return measurement;
+    }
+
+    public void setMeasurement(Measurement measurement) {
+        this.measurement = measurement;
+    }
+
     private boolean isMyCode(String code) {
         String cleanedCode = cleanCode(code);
 
@@ -193,6 +203,7 @@ public class Concept {
                 + ", Price: " + price + ", Last update: " + lastUpdate
                 + ", Factor: " + factor + ", Performance: " + performance
                 + ", Description: " + description
+                + ", Measurement: " + measurement
                 + ", Child concepts: \n\t" + childConcepts + "}";
     }
 }

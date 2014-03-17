@@ -19,7 +19,9 @@
 package com.disid.fiebdc3;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Contains the data of a Fiebdc 3 file.
@@ -92,6 +94,8 @@ public class Database {
     private Concept rootConcept;
 
     private Map<String, Concept> orphanConcepts = new HashMap<String, Concept>();
+
+    private Set<Measurement> orphanMeasurements = new HashSet<Measurement>();
 
     public String getFileProperty() {
         return fileProperty;
@@ -208,6 +212,22 @@ public class Database {
     }
 
     /**
+     * Looks for an already available concept. If it does not exist, a new one
+     * is created in the orphan codes list.
+     * 
+     * @param code
+     *            of the concept
+     * @return the concept
+     */
+    public Concept getAddConcept(String code) {
+        Concept concept = getConcept(code);
+        if (concept == null) {
+            concept = addOrphanConcept(code);
+        }
+        return concept;
+    }
+
+    /**
      * Creates a new concept, which is included in a set of concepts still not
      * organized: it is not a root concept, nor it has been added as a child
      * concept.
@@ -226,6 +246,26 @@ public class Database {
     }
 
     /**
+     * Returns if there are any orphan concepts pending to be organized.
+     * 
+     * @return if there are any orphan concepts pending to be organized
+     */
+    public boolean hasOrphanedConcepts() {
+        return orphanConcepts != null && !orphanConcepts.isEmpty();
+    }
+
+    /**
+     * Returns if there are any orphan measurements pending to be setted to a
+     * concept.
+     * 
+     * @return if there are any orphan measurements pending to be setted to a
+     *         concept
+     */
+    public boolean hasOrphanedMeasurements() {
+        return orphanMeasurements != null && !orphanMeasurements.isEmpty();
+    }
+
+    /**
      * Creates a new concept, which is added as a child of the given concept.
      * 
      * @param code
@@ -239,6 +279,32 @@ public class Database {
         }
         parentConcept.addChildConcept(concept);
         return concept;
+    }
+
+    /**
+     * Creates a new measurement and adds it to the database, without bein
+     * setted to a concept.
+     * 
+     * @return the new Measurement
+     */
+    public Measurement addMeasurement() {
+        Measurement measurement = new Measurement();
+        orphanMeasurements.add(measurement);
+        return measurement;
+    }
+
+    /**
+     * Sets a Measurement to the related Concept.
+     * 
+     * @param conceptCode
+     *            code of the Concept to set the Measure to
+     * @param measurement
+     *            to set to the Concept
+     */
+    public void setMeasurement(String conceptCode, Measurement measurement) {
+        Concept concept = getAddConcept(conceptCode);
+        concept.setMeasurement(measurement);
+        orphanMeasurements.remove(measurement);
     }
 
     @Override

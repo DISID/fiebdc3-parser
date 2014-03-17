@@ -18,8 +18,9 @@
 
 package com.disid.fiebdc3.antlr4;
 
+import static org.junit.Assert.assertFalse;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.net.URL;
@@ -59,6 +60,8 @@ public class AntlrFiebdc3ServiceIT {
         
         Database database = service.parse(testReader);
         
+        assertFalse(database.hasOrphanedConcepts());
+
         System.out.println("Parsed file: " + database);
     }
 

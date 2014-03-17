@@ -265,7 +265,9 @@ ej:
 ~M | 502mar#        \   PP14052     | 1\1\1\1\2\     | 0              |                                                                  |
 ~M | 502mar#        \   PP07015     | 1\1\1\1\3\     | 3.57           |        \ 0 a 7      \ 3        \ 0.21     \         \        \   |
 */
-mMeasurement: 'M' FIELDSEP ( mParentCode SUBFIELDSEP )+ mChildCode FIELDSEP ( mPosition SUBFIELDSEP )* FIELDSEP mTotalMeasurement FIELDSEP (mType? SUBFIELDSEP mComment? SUBFIELDSEP mUnits? SUBFIELDSEP mLongitude? SUBFIELDSEP mLatitude? SUBFIELDSEP mHeight? SUBFIELDSEP)* FIELDSEP (mLabel FIELDSEP)?;
+mMeasurement: 'M' FIELDSEP ( mParentCode SUBFIELDSEP )+ mChildCode FIELDSEP ( mPosition SUBFIELDSEP )* FIELDSEP mTotalMeasurement FIELDSEP (mLine)* FIELDSEP (mLabel FIELDSEP)?;
+
+mLine: mType? SUBFIELDSEP mComment? SUBFIELDSEP mUnits? SUBFIELDSEP mLongitude? SUBFIELDSEP mLatitude? SUBFIELDSEP mHeight? SUBFIELDSEP;
 
 mParentCode: TEXT;
 

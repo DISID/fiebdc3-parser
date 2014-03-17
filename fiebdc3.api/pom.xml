@@ -9,4 +9,12 @@
 	<artifactId>fiebdc3.api</artifactId>
 	<name>fiebdc3 parser API</name>
 	<description>API for the FIEBDC 3 file format parser</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 </project>

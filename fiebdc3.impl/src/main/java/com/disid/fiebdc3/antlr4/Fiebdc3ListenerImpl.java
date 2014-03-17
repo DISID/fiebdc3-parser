@@ -20,6 +20,8 @@ package com.disid.fiebdc3.antlr4;
 
 import com.disid.fiebdc3.Concept;
 import com.disid.fiebdc3.Database;
+import com.disid.fiebdc3.Measurement;
+import com.disid.fiebdc3.Measurement.Line;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CCodeContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CConceptContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CDateContext;
@@ -32,6 +34,19 @@ import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DChildCodeContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DFactorContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DParentCodeContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DPerformanceContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MChildCodeContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MCommentContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MHeightContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MLabelContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MLatitudeContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MLineContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MLongitudeContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MMeasurementContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MParentCodeContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MPositionContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MTotalMeasurementContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MTypeContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MUnitsContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.TConceptCodeContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.TDescriptionContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.TTextContext;
@@ -56,6 +71,8 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
 
     private Concept currentConcept;
     private Concept currentChildConcept;
+    private Measurement currentMeasurement;
+    private Line currentLine;
 
     // //////////////
     // V register //
@@ -108,7 +125,6 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     // //////////////
     // C register //
     // //////////////
-
     @Override
     public void enterCCode(CCodeContext ctx) {
         String code = ctx.getText().trim();
@@ -155,14 +171,10 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     // //////////////
     // D register //
     // //////////////
-
     @Override
     public void enterDParentCode(DParentCodeContext ctx) {
         String code = ctx.getText().trim();
-        currentConcept = database.getConcept(code);
-        if (currentConcept == null) {
-            currentConcept = database.addOrphanConcept(code);
-        }
+        currentConcept = database.getAddConcept(code);
     }
 
     @Override
@@ -198,14 +210,10 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     // //////////////
     // T register //
     // //////////////
-
     @Override
     public void enterTConceptCode(TConceptCodeContext ctx) {
         String code = ctx.getText().trim();
-        currentConcept = database.getConcept(code);
-        if (currentConcept == null) {
-            currentConcept = database.addOrphanConcept(code);
-        }
+        currentConcept = database.getAddConcept(code);
     }
 
     @Override
@@ -216,5 +224,83 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     @Override
     public void exitTText(TTextContext ctx) {
         currentConcept = null;
+    }
+
+    // //////////////
+    // M register //
+    // //////////////
+    @Override
+    public void enterMMeasurement(MMeasurementContext ctx) {
+        this.currentMeasurement = database.addMeasurement();
+    }
+
+    @Override
+    public void enterMParentCode(MParentCodeContext ctx) {
+        currentMeasurement.setParentConcept(ctx.getText().trim());
+    }
+
+    @Override
+    public void enterMChildCode(MChildCodeContext ctx) {
+        database.setMeasurement(ctx.getText().trim(), currentMeasurement);
+    }
+
+    @Override
+    public void enterMPosition(MPositionContext ctx) {
+        currentMeasurement.addPosition(ctx.getText());
+    }
+
+    @Override
+    public void enterMTotalMeasurement(MTotalMeasurementContext ctx) {
+        currentMeasurement.setTotal(ctx.getText());
+    }
+
+    @Override
+    public void enterMLine(MLineContext ctx) {
+        currentLine = currentMeasurement.addLine();
+    }
+
+    @Override
+    public void enterMType(MTypeContext ctx) {
+        currentLine.setType(ctx.getText());
+    }
+
+    @Override
+    public void enterMComment(MCommentContext ctx) {
+        currentLine.setComment(ctx.getText());
+    }
+
+    @Override
+    public void enterMUnits(MUnitsContext ctx) {
+        currentLine.setUnits(ctx.getText());
+    }
+
+    @Override
+    public void enterMLongitude(MLongitudeContext ctx) {
+        currentLine.setLength(ctx.getText());
+    }
+
+    @Override
+    public void enterMLatitude(MLatitudeContext ctx) {
+        currentLine.setWidth(ctx.getText());
+    }
+
+    @Override
+    public void enterMHeight(MHeightContext ctx) {
+        currentLine.setHeight(ctx.getText());
+    }
+
+    @Override
+    public void exitMLine(MLineContext ctx) {
+        currentLine = null;
+    }
+
+    @Override
+    public void enterMLabel(MLabelContext ctx) {
+        currentMeasurement.setLabel(ctx.getText());
+    }
+
+    @Override
+    public void exitMMeasurement(MMeasurementContext ctx) {
+        currentMeasurement = null;
     }
 }
