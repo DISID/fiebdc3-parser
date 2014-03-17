@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.disid</groupId>
 	<artifactId>fiebdc3</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>fiebdc3</name>
 	<description>FIEBDC 3 format parser</description>
@@ -23,38 +23,38 @@
 	</licenses>
 
 	<organization>
-		<name>gvSIG Association</name>
-		<url>http://www.gvsig.com/</url>
+		<name>DiSiD Technologies</name>
+		<url>http://www.disid.com/</url>
 	</organization>
 
 	<scm>
-		<connection>scm:svn:https://devel.gvsig.org/svn/gvsig-lang/trunk/org.gvsig.gvsiglang</connection>
-		<developerConnection>scm:svn:https://devel.gvsig.org/svn/gvsig-lang/trunk/org.gvsig.gvsiglang</developerConnection>
-		<url>https://devel.gvsig.org/redmine/projects/gvsig-lang/repository/show/trunk/org.gvsig.gvsiglang</url>
+		<connection>scm:git:https://github.com/DISID/fiebdc3-parser.git</connection>
+		<developerConnection>scm:git:https://github.com/DISID/fiebdc3-parser.git</developerConnection>
+		<url>https://github.com/DISID/fiebdc3-parser</url>
 	</scm>
 
 	<distributionManagement>
+	    <!-- TODO
 		<site>
-			<id>gvsig-repository</id>
+			<id>github</id>
 			<url>dav:https://devel.gvsig.org/sites/${project.artifactId}/${project.version}</url>
 		</site>
-		<repository>
-			<id>gvsig-repository</id>
-			<name>gvSIG maven repository</name>
-			<url>dav:https://devel.gvsig.org/m2repo/j2se</url>
-			<uniqueVersion>false</uniqueVersion>
-		</repository>
+		 -->
+        <repository>
+            <id>gvNIX Add-on repository</id>
+            <url>https://gvnix.googlecode.com/svn/repo</url>
+            <name>gvNIX Add-on repository</name>
+        </repository>
 		<snapshotRepository>
-			<id>gvsig-repository</id>
-			<name>gvSIG maven repository</name>
-			<url>dav:https://devel.gvsig.org/m2repo/j2se</url>
-			<uniqueVersion>false</uniqueVersion>
+            <id>gvNIX Add-on repository</id>
+            <url>https://gvnix.googlecode.com/svn/repo</url>
+            <name>gvNIX Add-on repository SNAPSHOTS</name>
 		</snapshotRepository>
 	</distributionManagement>
 
 	<issueManagement>
-		<system>redmine</system>
-		<url>https://devel.gvsig.org/redmine/projects/gvsig-desktop</url>
+		<system>github</system>
+		<url>https://github.com/DISID/fiebdc3-parser/issues</url>
 	</issueManagement>
 
 	<developers>
@@ -107,6 +107,7 @@
 					<version>2.16</version>
 					<executions>
 						<execution>
+							<id>integration-test</id>
 							<goals>
 								<goal>integration-test</goal>
 								<goal>verify</goal>
@@ -156,6 +157,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-release-plugin</artifactId>
 					<version>2.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.antlr</groupId>
+					<artifactId>antlr4-maven-plugin</artifactId>
+					<version>4.2</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -215,6 +221,7 @@
 	<properties>
 		<antlr.version>4.2</antlr.version>
 		<junit.version>4.11</junit.version>
+		<joda.time.version>2.3</joda.time.version>
 	</properties>
 
 	<modules>
