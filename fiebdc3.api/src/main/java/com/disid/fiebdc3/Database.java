@@ -26,19 +26,50 @@ import java.util.Set;
 
 /**
  * Contains the data of a Fiebdc 3 file.
- * @author DiSiD Team
- */
-/**
- * @author DiSiD Team
+ * <p>
+ * A database has is composed of a root {@link Concept}, which itself might be
+ * composed of child {@link Concept}s:
+ * </p>
  * 
+ * <pre>
+ * database
+ * '-> root concept
+ *     |-> concept 1
+ *     |   '-> measurement
+ *     |       |-> line 1
+ *     |       |-> line 2
+ *     |       ...
+ *     |       '-> line n 
+ *     |-> concept 2
+ *     ...
+ *     '-> concept n
+ * </pre>
+ * 
+ * <p>
+ * This class is also a factory for the elements it includes, so {@link Concept}
+ * s and {@link Measurement}s can only be created through a {@link Database}.
+ * </p>
+ * 
+ * @author DiSiD Team
  */
 public class Database {
 
+    /**
+     * Enumeration of the available charset options for the Fiebdc3 file.
+     * 
+     * @author DiSiD Team
+     */
     public enum Charset {
         ANSI("ANSI"), C850("850"), C437("437");
         
         private final String code;
         
+        /**
+         * Create a new Charset with the given code
+         * 
+         * @param code
+         *            of the charset
+         */
         private Charset(String code) {
             this.code = code;
         }
@@ -48,6 +79,13 @@ public class Database {
             return code;
         }
 
+        /**
+         * Returns the Charset with the given code or null if not available.
+         * 
+         * @param code
+         *            of the charset
+         * @return the Charset with the code
+         */
         public static Charset parseCharset(String code) {
             for (Charset c : Charset.values()) {
                 if (c.code.equals(code)) {
@@ -58,62 +96,22 @@ public class Database {
         }
     }
 
-    /**
-     * PROPIEDAD_ARCHIVO: Redactor de la base de datos u obra, fecha, …
-     */
     private String fileProperty;
 
-    /**
-     * VERSION_FORMATO: VERSION del formato del archivo, la actual es
-     * FIEBDC-3/2007
-     */
     private String fileFormat;
 
-    /**
-     * PROGRAMA_EMISION: Programa y/o empresa que genera los ficheros en formato
-     * BC3.
-     */
     private String generatedBy;
 
-    /**
-     * CABECERA: Título general de los ROTULOS_IDENTIFICACION.
-     */
     private String header;
 
-    /**
-     * JUEGO_CARACTERES: Asigna si el juego de caracteres a emplear es el
-     * definido para D.O.S., cuyos identificadores serán 850 ó 437, o es el
-     * definido para Windows, cuyo identificador será ANSI. En caso de que dicho
-     * campo esté vacío se interpretará, por omisión, que el juego de caracteres
-     * a utilizar será el 850 por compatibilidad con versiones anteriores.
-     */
     private Charset charset = Charset.C850;
 
-    /**
-     * COMENTARIO: Contenido del archivo (base, obra...).
-     */
     private String comments;
 
-    /**
-     * TIPO INFORMACIÓN: Índice del tipo de información a intercambiar. Se
-     * definen los siguientes tipos: 1 Base de datos. 2 Presupuesto. 3
-     * Certificación (a origen). 4 Actualización de base de datos.
-     */
     private int infoType;
 
-    /**
-     * NÚMERO CERTIFICACIÓN: Valor numérico indicando el orden de la
-     * certificación (1, 2, 3,...) Solo tiene sentido cuando el tipo de
-     * información es Certificación.
-     */
     private int certNum;
 
-    /**
-     * FECHA CERTIFICACIÓN: Fecha de la certificación indicada en el campo
-     * número certificación. Solo tiene sentido cuando el tipo de información es
-     * Certificación. La fecha se definirá con el mismo formato que el campo
-     * DDMMAAAA de este registro
-     */
     private Date certDate;
 
     private Concept rootConcept;
@@ -122,6 +120,12 @@ public class Database {
 
     private Set<Measurement> orphanMeasurements = new HashSet<Measurement>();
 
+    /**
+     * Spec definition:<br/>
+     * <i> PROPIEDAD_ARCHIVO: Redactor de la base de datos u obra, fecha, … </i>
+     * 
+     * @return the file writer or owner
+     */
     public String getFileProperty() {
         return fileProperty;
     }
@@ -130,6 +134,11 @@ public class Database {
         this.fileProperty = fileProperty;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i> VERSION_FORMATO: VERSION del formato del archivo, la actual es
+     * FIEBDC-3/2007 </i>
+     */
     public String getFileFormat() {
         return fileFormat;
     }
@@ -138,6 +147,11 @@ public class Database {
         this.fileFormat = fileFormat;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i> PROGRAMA_EMISION: Programa y/o empresa que genera los ficheros en
+     * formato BC3. </i>
+     */
     public String getGeneratedBy() {
         return generatedBy;
     }
@@ -146,6 +160,10 @@ public class Database {
         this.generatedBy = generatedBy;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i> CABECERA: Título general de los ROTULOS_IDENTIFICACION. </i>
+     */
     public String getHeader() {
         return header;
     }
@@ -154,6 +172,14 @@ public class Database {
         this.header = header;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i> JUEGO_CARACTERES: Asigna si el juego de caracteres a emplear es el
+     * definido para D.O.S., cuyos identificadores serán 850 ó 437, o es el
+     * definido para Windows, cuyo identificador será ANSI. En caso de que dicho
+     * campo esté vacío se interpretará, por omisión, que el juego de caracteres
+     * a utilizar será el 850 por compatibilidad con versiones anteriores. </i>
+     */
     public Charset getCharset() {
         return charset;
     }
@@ -162,6 +188,10 @@ public class Database {
         this.charset = charset;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i> COMENTARIO: Contenido del archivo (base, obra...). </i>
+     */
     public String getComments() {
         return comments;
     }
@@ -170,6 +200,12 @@ public class Database {
         this.comments = comments;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i> TIPO INFORMACIÓN: Índice del tipo de información a intercambiar. Se
+     * definen los siguientes tipos: 1 Base de datos. 2 Presupuesto. 3
+     * Certificación (a origen). 4 Actualización de base de datos. </i>
+     */
     public int getInfoType() {
         return infoType;
     }
@@ -178,6 +214,12 @@ public class Database {
         this.infoType = infoType;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i> NÚMERO CERTIFICACIÓN: Valor numérico indicando el orden de la
+     * certificación (1, 2, 3,...) Solo tiene sentido cuando el tipo de
+     * información es Certificación. </i>
+     */
     public int getCertNum() {
         return certNum;
     }
@@ -186,6 +228,13 @@ public class Database {
         this.certNum = certNum;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i> FECHA CERTIFICACIÓN: Fecha de la certificación indicada en el campo
+     * número certificación. Solo tiene sentido cuando el tipo de información es
+     * Certificación. La fecha se definirá con el mismo formato que el campo
+     * DDMMAAAA de este registro </i>
+     */
     public Date getCertDate() {
         return certDate;
     }
@@ -194,6 +243,11 @@ public class Database {
         this.certDate = certDate;
     }
 
+    /**
+     * Returns the database root {@link Concept}.
+     * 
+     * @return the main root concept
+     */
     public Concept getRootConcept() {
         return rootConcept;
     }

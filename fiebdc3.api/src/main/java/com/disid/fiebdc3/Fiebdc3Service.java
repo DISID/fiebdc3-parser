@@ -23,6 +23,15 @@ import java.io.Reader;
 
 /**
  * API of the service to parse Fiebdc 3 files.
+ * <p>
+ * Usage: <code><pre>
+ * File testFile = new File("test.bc3");
+ * Reader testReader = new FileReader(testFile);
+ * Fiebdc3Service service = new AntlrFiebdc3Service();
+ * Database database = service.parse(testReader);
+ * </pre></code>
+ * </p>
+ * 
  * @author DiSiD Team
  */
 public interface Fiebdc3Service {

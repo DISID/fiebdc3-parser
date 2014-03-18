@@ -61,6 +61,13 @@ public class Concept {
         this.code = cleanCode(code);
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i>CODIGO: CODIGO del concepto descrito. Un concepto puede tener varios
+     * CODIGOs que actuarán como sinónimos, este mecanismo permite integrar
+     * distintos sistemas de clasificación. Puede tener un máximo de 20
+     * caracteres. </i>
+     */
     public String getCode() {
         return code;
     }
@@ -69,6 +76,12 @@ public class Concept {
         this.code = cleanCode(code);
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i> UNIDAD: Unidad de medida. Existe una relación de unidades de medida
+     * recomendadas, elaborada por la Asociación de Redactores de Bases de Datos
+     * de CONSTRUCCION. Véase el Anexo 7 sobre Unidades de Medida.</i>
+     */
     public String getMeasureUnit() {
         return measureUnit;
     }
@@ -77,6 +90,12 @@ public class Concept {
         this.measureUnit = measureUnit;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i>RESUMEN: Resumen del texto descriptivo. Cada soporte indicará el
+     * número de caracteres que admite en su campo resumen. Se recomienda un
+     * máximo de 64 caracteres.</i>
+     */
     public String getSummary() {
         return summary;
     }
@@ -85,6 +104,24 @@ public class Concept {
         this.summary = summary;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i>PRECIO: Precio del concepto. Un concepto puede tener varios precios
+     * alternativos que representen distintas épocas, ámbitos geográficos, etc.,
+     * definidos biunívocamente respecto al campo [CABECERA \
+     * {ROTULO_IDENTIFICACION\} del registro ~V. Cuando haya más de un precio se
+     * asignarán secuencialmente a cada ROTULO definido; si hay más ROTULOS que
+     * precios, se asignará a aquellos el último precio definido. En el caso que
+     * el concepto posea descomposición, este precio será el resultado de dicha
+     * descomposición y se proporcionará, de forma obligatoria, para permitir su
+     * comprobación. En caso de discrepancia, tendrá preponderancia el resultado
+     * obtenido por la descomposición, tal como se indica en el registro Tipo
+     * Descomposición, ~D, y complementariamente se podría informar al usuario
+     * de dicha situación. Esto se aplica también a los conceptos tipo capítulo
+     * y concepto raíz de una Obra o Presupuesto. Como excepción a esta regla
+     * está el intercambio de mediciones no estructuradas (véase la descripción
+     * del registro Tipo Mediciones, ~M).</i>
+     */
     public List<Float> getPrices() {
         return prices;
     }
@@ -102,6 +139,13 @@ public class Concept {
         return prices.get(0);
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i>FECHA: Fecha de la última actualización del precio. Cuando haya más de
+     * una fecha se asignarán secuencialmente a cada precio definido, si hay más
+     * precios que fechas, los precios sin su correspondiente fecha tomarán la
+     * última fecha definida.</i>
+     */
     public List<Date> getLastUpdates() {
         return lastUpdates;
     }
@@ -119,6 +163,16 @@ public class Concept {
         return lastUpdates.get(0);
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i>TIPO: Tipo de concepto, Inicialmente se reservan los siguientes tipos:
+     * 0 (Sin clasificar) 1 (Mano de obra), 2 (Maquinaria y medios aux.), 3
+     * (Materiales). También se permite (y aconseja) utilizar la clasificación
+     * indicada por el BOE y la CNC en índices y fórmulas polinómicas de
+     * revisión de precios así como los aconsejados por la Asociación de
+     * Redactores de Bases de Datos de la Construcción. En el Anexo 4 aparecen
+     * los tipos actualmente vigentes.</i>
+     */
     public String getType() {
         return type;
     }
@@ -127,6 +181,10 @@ public class Concept {
         this.type = type;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i>FACTOR: Factor de rendimiento, por defecto 1.0</i>
+     */
     public Float getFactor() {
         return factor;
     }
@@ -135,6 +193,11 @@ public class Concept {
         this.factor = factor;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i>RENDIMIENTO: Número de unidades, rendimiento o medición, por defecto
+     * 1.0</i>
+     */
     public Float getPerformance() {
         return performance;
     }
@@ -143,6 +206,12 @@ public class Concept {
         this.performance = performance;
     }
 
+    /**
+     * Spec definition:<br/>
+     * <i>TEXTO_DESCRIPTIVO: Texto descriptivo del concepto sin limitación de
+     * tamaño. El texto podrá contener caracteres fin de línea (ASCII-13 +
+     * ASCII-10) que se mantendrán al reformatearlo.</i>
+     */
     public String getDescription() {
         return description;
     }
@@ -151,10 +220,22 @@ public class Concept {
         this.description = description;
     }
 
+    /**
+     * Breakdown of this concepts in subconcepts.
+     * 
+     * @return the list of child concepts.
+     */
     public Iterable<Concept> getChildConcepts() {
         return childConcepts;
     }
 
+    /**
+     * Adds a new child concept
+     * 
+     * @param concept
+     *            the child concept
+     * @return if it was already included as a child concept
+     */
     boolean addChildConcept(Concept concept) {
         if (childConcepts == null) {
             childConcepts = new ArrayList<Concept>();
@@ -162,6 +243,14 @@ public class Concept {
         return childConcepts.add(concept);
     }
 
+    /**
+     * Returns a descendant concept with the given code, which might include '\'
+     * separators to define a path of concept codes.
+     * 
+     * @param code
+     *            to find
+     * @return the found code or null
+     */
     public Concept getConcept(String code) {
         String parentCode = code;
         String childCode = code;
@@ -194,6 +283,11 @@ public class Concept {
         return null;
     }
 
+    /**
+     * Returns the measurement related to this concept.
+     * 
+     * @return the measurement related to this concept
+     */
     public Measurement getMeasurement() {
         return measurement;
     }
