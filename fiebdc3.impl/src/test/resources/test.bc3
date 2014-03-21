@@ -1,3 +1,61 @@
-~V|CYPE INGENIEROS, S.A.|FIEBDC-3/2004|ARQUIMEDES||ANSI|Certificación en curso|3|8||
+~V|The generator|FIEBDC-3/2007|The application||ANSI|Example BC3 file|3|8||
 ~K|\2\3\3\2\2\2\2\EUR\|0\13\6\\21|\2\\\3\\2\2\2\\2\3\EUR\||
-~C|AZ346OBRA##||Conservación, reparación y mejora de carreteras de titularidad provincial en la demarcación de Alzira (2013-2016)|1409291.73|260713|0|
+~C|ROOT##||Root concept|1000400.48|210314|0|
+~D|ROOT##
+|01#\\1
+\02#\\1
+\|
+
+~C|01#||Subconcept 1|500200.24|210314|0|
+~T|01#|Subconcept 1 description|
+~D|01#
+|01A\\1
+\01B\\1
+\|
+
+~C|01A||Subsubconcept 1A|250100.12|210314|0|
+~T|01A|Subsubconcept 1A description|
+
+~M|01#\01A|1\1\1\|250100.12|
+\Line 01A 1\1\150100.12\\\
+1\\\\\\
+\Line 01A 2\100\1000\\\
+1\\\\\\
+2\\\\\\|
+
+~C|01B||Subsubconcept 1B|250100.12|210314|0|
+~T|01B|Subsubconcept 1B description|
+
+~M|01#\01B|1\1\1\|250100.12|
+\Line 01B 1\1\150100.12\\\
+1\\\\\\
+\Line 01B 2\100\1000\\\
+1\\\\\\
+2\\\\\\|
+
+~C|02#||Subconcept 2|500250.23|210314|0|
+~T|02#|Subconcept 2 description|
+~D|02#
+|02A\\1
+\02B\\1
+\|
+
+~C|02A||Subsubconcept 2A|250100.12|210314|0|
+~T|02A|Subsubconcept 2A description|
+
+~M|02#\02A|1\1\1\|250100.12|
+\Line 02A 1\1\150100.12\\\
+1\\\\\\
+\Line 02A 2\100\1000\\\
+1\\\\\\
+2\\\\\\|
+
+~C|02B||Subsubconcept 2B|250100.12|210314|0|
+~T|02B|Subsubconcept 2B description|
+
+~M|02#\02B|1\1\1\|250100.12|
+\Line 02B 1\1\150100.12\\\
+1\\\\\\
+\Line 02B 2\100\1000\\\
+1\\\\\\
+2\\\\\\|
