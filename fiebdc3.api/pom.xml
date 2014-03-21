@@ -17,4 +17,9 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<properties>
+		<site.path>sites/${project.version}/${project.artifactId}</site.path>
+	</properties>
+
 </project>
