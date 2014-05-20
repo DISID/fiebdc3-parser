@@ -60,7 +60,8 @@ public class AntlrFiebdc3ServiceIT {
         
         Database database = service.parse(testReader);
         
-        assertFalse(database.hasOrphanedConcepts());
+        assertFalse(database.hasOrphanedConceptBreakdowns());
+        assertFalse(database.hasOrphanedMeasurements());
 
         System.out.println("Parsed file: " + database);
     }

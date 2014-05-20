@@ -39,12 +39,12 @@
 			<url>http://disid.github.io/fiebdc3-parser/sites/${project.version}</url>
 		</site>
 		<repository>
-			<id>gvNIX Add-on repository</id>
+			<id>gvnix</id>
 			<url>https://gvnix.googlecode.com/svn/repo</url>
 			<name>gvNIX Add-on repository</name>
 		</repository>
 		<snapshotRepository>
-			<id>gvNIX Add-on repository</id>
+			<id>gvnix</id>
 			<url>https://gvnix.googlecode.com/svn/repo</url>
 			<name>gvNIX Add-on repository SNAPSHOTS</name>
 		</snapshotRepository>

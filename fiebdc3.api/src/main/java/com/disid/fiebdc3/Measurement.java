@@ -36,38 +36,12 @@ public class Measurement {
 
     Float total;
 
-    List<Line> lines = new ArrayList<Line>();
+    List<MeasurementLine> measurements = new ArrayList<MeasurementLine>();
 
     String label;
 
     Measurement() {
         // Nothing to do
-    }
-
-    /**
-     * Spec definition:<br/>
-     * <i>CODIGO_PADRE: CODIGO del concepto padre o concepto descompuesto del
-     * presupuesto.</i>
-     */
-    public String getParentConcept() {
-        return parentConcept;
-    }
-
-    public void setParentConcept(String parentConcept) {
-        this.parentConcept = parentConcept;
-    }
-
-    /**
-     * Spec definition:<br/>
-     * <i>CODIGO_HIJO: CODIGO del concepto hijo o concepto de la línea de
-     * descomposición.</i>
-     */
-    public String getConcept() {
-        return concept;
-    }
-
-    public void setConcept(String concept) {
-        this.concept = concept;
     }
 
     /**
@@ -108,23 +82,23 @@ public class Measurement {
     }
 
     /**
-     * Returns the lines of the measurement.
+     * Returns the measurements of the work unit.
      * 
-     * @return the lines of the measurement
+     * @return the measurements of the work unit
      */
-    public List<Line> getLines() {
-        return lines;
+    public List<MeasurementLine> getMeasurements() {
+        return measurements;
     }
 
     /**
-     * Adds a new line to the measurement.
+     * Adds a new measurement.
      * 
-     * @return the new added line
+     * @return the new added measurement
      */
-    public Line addLine() {
-        Line line = new Line();
-        this.lines.add(line);
-        return line;
+    public MeasurementLine addMeasurement() {
+        MeasurementLine measurement = new MeasurementLine();
+        this.measurements.add(measurement);
+        return measurement;
     }
 
     /**
@@ -146,136 +120,32 @@ public class Measurement {
         this.label = label;
     }
 
-    @Override
-    public String toString() {
-        return "Measurement {" + "Parent concept code: " + parentConcept
-                + ", Concept code: " + concept + ", Position: " + position
-                + ", Total: " + total + ", Label: " + label + ", Lines: "
-                + lines + "}";
+    public String getParentConcept() {
+        return parentConcept;
     }
 
-    /**
-     * A {@link Measurement} line.
-     * 
-     * @author DiSiD Team
-     */
-    public static class Line {
+    public void setParentConcept(String parentConcept) {
+        this.parentConcept = parentConcept;
+    }
 
-        Integer type;
+    public String getConcept() {
+        return concept;
+    }
 
-        String comment;
+    public void setConcept(String concept) {
+        this.concept = concept;
+    }
 
-        Float units;
+    public MeasurementLine addLine() {
+        MeasurementLine line = new MeasurementLine();
+        measurements.add(line);
+        return line;
+    }
 
-        Float length;
-
-        Float width;
-
-        Float height;
-
-        /**
-         * Spec definition:<br/>
-         * <i>/* TIPO: Indica el tipo de línea de medición de que se trate.
-         * Usualmente este subcampo estará vacío. Los tipos establecidos en esta
-         * VERSION son: '1': Subtotal parcial: En esta línea aparecerá el
-         * subtotal de las líneas anteriores desde el último subtotal hasta la
-         * línea inmediatamente anterior a ésta. '2': Subtotal acumulado: En
-         * esta línea aparecerá el subtotal de todas las líneas anteriores desde
-         * la primera hasta la línea inmediatamente anterior a ésta. '3':
-         * Expresión: Indicará que en el subcampo COMENTARIO aparecerá una
-         * expresión algebraica a evaluar. Se podrán utilizar los operadores
-         * '(', ')', '+', '-', '*', '/' y '^'; las variables 'a', 'b', 'c' y 'd'
-         * (que tendrán por valor las cantidades introducidas en los subcampos
-         * UNIDADES, LONGITUD, LATITUD y ALTURA respectivamente); y la constante
-         * 'p' para el valor Pi=3.1415926. Esta expresión será válida hasta la
-         * siguiente línea de medición en la que se defina otra expresión. Solo
-         * se evalúa la expresión y no se multiplica por las unidades. Las
-         * expresiones fórmulas utilizan los criterios definidos en el anexo 2.
-         * </i>
-         */
-        public Integer getType() {
-            return type;
-        }
-
-        public void setType(Integer type) {
-            this.type = type;
-        }
-
-        /**
-         * Spec definition:<br/>
-         * <i>COMENTARIO: Texto en la línea de medición. Podrá ser un comentario
-         * o una expresión algebraica.</i>
-         */
-        public String getComment() {
-            return comment;
-        }
-
-        public void setComment(String comment) {
-            this.comment = comment;
-        }
-
-        /**
-         * Spec definition:<br/>
-         * <i>UNIDADES, LONGITUD, LATITUD, ALTURA: Cuatro número reales con las
-         * mediciones. Si alguna magnitud no existe se dejará este campo
-         * vacío</i>
-         */
-        public Float getUnits() {
-            return units;
-        }
-
-        public void setUnits(Float units) {
-            this.units = units;
-        }
-
-        /**
-         * Spec definition:<br/>
-         * <i>UNIDADES, LONGITUD, LATITUD, ALTURA: Cuatro número reales con las
-         * mediciones. Si alguna magnitud no existe se dejará este campo
-         * vacío</i>
-         */
-        public Float getLength() {
-            return length;
-        }
-
-        public void setLength(Float length) {
-            this.length = length;
-        }
-
-        /**
-         * Spec definition:<br/>
-         * <i>UNIDADES, LONGITUD, LATITUD, ALTURA: Cuatro número reales con las
-         * mediciones. Si alguna magnitud no existe se dejará este campo
-         * vacío</i>
-         */
-        public Float getWidth() {
-            return width;
-        }
-
-        public void setWidth(Float width) {
-            this.width = width;
-        }
-
-        /**
-         * Spec definition:<br/>
-         * <i>UNIDADES, LONGITUD, LATITUD, ALTURA: Cuatro número reales con las
-         * mediciones. Si alguna magnitud no existe se dejará este campo
-         * vacío</i>
-         */
-        public Float getHeight() {
-            return height;
-        }
-
-        public void setHeight(Float height) {
-            this.height = height;
-        }
-
-        @Override
-        public String toString() {
-            return "Line {" + "Type: " + type + ", Comment: " + comment
-                    + ", Units: " + units + ", Length: " + length + ", Width: "
-                    + width + ", Height: " + height + "}";
-        }
-
+    @Override
+    public String toString() {
+        return "Measurement {" + super.toString() + ", Position: " + position
+                + ", Total: " + total + ", Label: " + label
+                + ", Measurements: " + measurements + "}";
     }
 }

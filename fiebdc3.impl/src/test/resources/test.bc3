@@ -6,56 +6,50 @@
 \02#\\1
 \|
 
-~C|01#||Subconcept 1|500200.24|210314|0|
+~C|01#||Subconcept 1|148|210314|0|
 ~T|01#|Subconcept 1 description|
 ~D|01#
-|01A\\1
-\01B\\1
+|A01\\1
+\B01\\1
 \|
-
-~C|01A||Subsubconcept 1A|250100.12|210314|0|
-~T|01A|Subsubconcept 1A description|
-
-~M|01#\01A|1\1\1\|250100.12|
-\Line 01A 1\1\150100.12\\\
-1\\\\\\
-\Line 01A 2\100\1000\\\
-1\\\\\\
-2\\\\\\|
-
-~C|01B||Subsubconcept 1B|250100.12|210314|0|
-~T|01B|Subsubconcept 1B description|
-
-~M|01#\01B|1\1\1\|250100.12|
-\Line 01B 1\1\150100.12\\\
-1\\\\\\
-\Line 01B 2\100\1000\\\
-1\\\\\\
-2\\\\\\|
 
 ~C|02#||Subconcept 2|500250.23|210314|0|
 ~T|02#|Subconcept 2 description|
 ~D|02#
-|02A\\1
-\02B\\1
+|A01\\1
+\B01\\1
 \|
 
-~C|02A||Subsubconcept 2A|250100.12|210314|0|
-~T|02A|Subsubconcept 2A description|
+~C|A01||Subsubconcept A01|10|210314|0|
+~T|A01|Subsubconcept A01 description|
 
-~M|02#\02A|1\1\1\|250100.12|
-\Line 02A 1\1\150100.12\\\
+~C|B01||Subsubconcept 1B|2.4|210314|0|
+~T|B01|Subsubconcept 1B description|
+
+~M|01#\A01|1\1\1\|10|
+\Line A01 1\1\2\\\
 1\\\\\\
-\Line 02A 2\100\1000\\\
+\Line A01 2\2\2\2\\
 1\\\\\\
 2\\\\\\|
 
-~C|02B||Subsubconcept 2B|250100.12|210314|0|
-~T|02B|Subsubconcept 2B description|
-
-~M|02#\02B|1\1\1\|250100.12|
-\Line 02B 1\1\150100.12\\\
+~M|01#\B01|1\1\2\|20|
+\Line B01 1\5\\\\
 1\\\\\\
-\Line 02B 2\100\1000\\\
+\Line B01 2\3\5\\\
+1\\\\\\
+2\\\\\\|
+
+~M|02#\A01|1\1\1\|10|
+\Line A01 1\1\2\\\
+1\\\\\\
+\Line A01 2\2\2\2\\
+1\\\\\\
+2\\\\\\|
+
+~M|02#\B01|1\1\2\|20|
+\Line B01 1\5\\\\
+1\\\\\\
+\Line B01 2\3\5\\\
 1\\\\\\
 2\\\\\\|

@@ -33,16 +33,17 @@ import java.util.Set;
  * 
  * <pre>
  * database
- * '-> root concept
- *     |-> concept 1
- *     |   '-> measurement
- *     |       |-> line 1
- *     |       |-> line 2
+ * '-> list of concepts
+ * '-> root concept breakdown (related to a concept)
+ *     |-> child concept breakdown 1 (related to a concept, might have chapter or workunit as children)
+ *     |   '-> grandson concept breakdown (related to a concept)
+ *     |       |-> measurement 1
+ *     |       |-> measurement 2
  *     |       ...
- *     |       '-> line n 
- *     |-> concept 2
+ *     |       '-> measurement n 
+ *     |-> child concept breakdown 2 (related to a concept)
  *     ...
- *     '-> concept n
+ *     '-> child concept breakdown n (related to a concept)
  * </pre>
  * 
  * <p>
@@ -61,9 +62,9 @@ public class Database {
      */
     public enum Charset {
         ANSI("ANSI"), C850("850"), C437("437");
-        
+
         private final String code;
-        
+
         /**
          * Create a new Charset with the given code
          * 
@@ -114,11 +115,13 @@ public class Database {
 
     private Date certDate;
 
-    private Concept rootConcept;
+    private ConceptBreakdown root;
 
-    private Map<String, Concept> orphanConcepts = new HashMap<String, Concept>();
+    private Map<String, ConceptBreakdown> orphanBreakdowns = new HashMap<String, ConceptBreakdown>();
 
     private Set<Measurement> orphanMeasurements = new HashSet<Measurement>();
+
+    private Map<String, Concept> concepts = new HashMap<String, Concept>();
 
     /**
      * Spec definition:<br/>
@@ -248,12 +251,70 @@ public class Database {
      * 
      * @return the main root concept
      */
-    public Concept getRootConcept() {
-        return rootConcept;
+    public ConceptBreakdown getRoot() {
+        return root;
     }
 
-    void setRootConcept(Concept rootConcept) {
-        this.rootConcept = rootConcept;
+    private void setRoot(ConceptBreakdown root) {
+        this.root = root;
+    }
+
+    /**
+     * Creates and sets a new root concept breakdown for the database.
+     * 
+     * @param code
+     *            to identify the concept of the breakdown
+     * @return the new root concept breakdown
+     */
+    public ConceptBreakdown setRoot(String code) {
+        ConceptBreakdown bd = orphanBreakdowns.remove(code);
+        if (bd == null) {
+            bd = new ConceptBreakdown(code);
+        }
+        setRoot(bd);
+        return bd;
+    }
+
+    public ConceptBreakdown addConceptBreakdown(String code) {
+        ConceptBreakdown bd = getExistingConceptBreakdown(code);
+        if (bd == null) {
+            bd = new ConceptBreakdown(code);
+            orphanBreakdowns.put(code, bd);
+        }
+        return bd;
+    }
+
+    public ConceptBreakdown addConceptBreakdown(String parentCode, String code) {
+        if (parentCode == null) {
+            return addConceptBreakdown(code);
+        }
+        ConceptBreakdown parent = addConceptBreakdown(parentCode);
+        // Is already an organized ConceptBreakdown
+        ConceptBreakdown bd = parent.getCodeBreakdown(code);
+        // Is still an orphan breakdown
+        if (bd == null) {
+            bd = orphanBreakdowns.remove(code);
+        }
+        // It still does not exist
+        if (bd == null) {
+            bd = new ConceptBreakdown(parentCode, code);
+        }
+        parent.addChildBreakdownInfo(bd);
+        bd.setParentConceptCode(parentCode);
+        return bd;
+    }
+
+    private ConceptBreakdown getExistingConceptBreakdown(String code) {
+        ConceptBreakdown bd = null;
+        if (getRoot() != null) {
+            bd = getRoot().getCodeBreakdown(code);
+        }
+
+        if (bd == null) {
+            bd = orphanBreakdowns.get(code);
+        }
+
+        return bd;
     }
 
     /**
@@ -264,73 +325,55 @@ public class Database {
      * @return the concept with the given code
      */
     public Concept getConcept(String code) {
-        Concept concept = rootConcept == null ? null : rootConcept
-                .getConcept(code);
-
-        if (concept == null) {
-            concept = orphanConcepts.get(code);
-        }
-
-        return concept;
+        return concepts.get(code);
     }
 
     /**
-     * Add a new root concept for the database.
+     * Returns the concept related to a concept breakdown.
      * 
-     * @param code
-     *            to identify the concept
-     * @return the new root concept
+     * @param bd
+     *            the concept breakdown
+     * @return the related concept
      */
-    public Concept addRootConcept(String code) {
-        Concept concept = orphanConcepts.remove(code);
-        if (concept == null) {
-            concept = new Concept(code);
-        }
-        setRootConcept(concept);
-        return concept;
+    public Concept getConcept(ConceptBreakdown bd) {
+        return getConcept(bd.getConceptCode());
     }
 
     /**
-     * Looks for an already available concept. If it does not exist, a new one
-     * is created in the orphan codes list.
+     * Returns the concept with the given code in the database, or creates a new
+     * one if it didn't exist.
      * 
      * @param code
-     *            of the concept
-     * @return the concept
+     *            of the {@link Concept}
+     * @return the concept with the given code
      */
-    public Concept getAddConcept(String code) {
+    public Concept getOrAddConcept(String code) {
         Concept concept = getConcept(code);
-        if (concept == null) {
-            concept = addOrphanConcept(code);
-        }
-        return concept;
+        return concept == null ? addConcept(code) : concept;
     }
 
     /**
-     * Creates a new concept, which is included in a set of concepts still not
-     * organized: it is not a root concept, nor it has been added as a child
-     * concept.
+     * Creates and adds a concept with the given code to the database.
      * 
      * @param code
-     *            of the concept
-     * @return the created concept
+     *            of the {@link Concept}
+     * @return the new concept with the given code
      */
-    public Concept addOrphanConcept(String code) {
-        Concept concept = orphanConcepts.get(code);
-        if (concept == null) {
-            concept = new Concept(code);
-            orphanConcepts.put(code, concept);
-        }
+    private Concept addConcept(String code) {
+        Concept concept = new Concept(code);
+        concepts.put(code, concept);
         return concept;
     }
 
     /**
-     * Returns if there are any orphan concepts pending to be organized.
+     * Returns if there are any orphan concept breakdowns pending to be
+     * organized.
      * 
-     * @return if there are any orphan concepts pending to be organized
+     * @return if there are any orphan concept breakdowns pending to be
+     *         organized
      */
-    public boolean hasOrphanedConcepts() {
-        return orphanConcepts != null && !orphanConcepts.isEmpty();
+    public boolean hasOrphanedConceptBreakdowns() {
+        return orphanBreakdowns != null && !orphanBreakdowns.isEmpty();
     }
 
     /**
@@ -345,28 +388,12 @@ public class Database {
     }
 
     /**
-     * Creates a new concept, which is added as a child of the given concept.
-     * 
-     * @param code
-     *            of the concept
-     * @return the created concept
-     */
-    public Concept addChildConcept(String code, Concept parentConcept) {
-        Concept concept = orphanConcepts.remove(code);
-        if (concept == null) {
-            concept = new Concept(code);
-        }
-        parentConcept.addChildConcept(concept);
-        return concept;
-    }
-
-    /**
      * Creates a new measurement and adds it to the database, without bein
      * setted to a concept.
      * 
      * @return the new Measurement
      */
-    public Measurement addMeasurement() {
+    public Measurement createMeasurement() {
         Measurement measurement = new Measurement();
         orphanMeasurements.add(measurement);
         return measurement;
@@ -381,8 +408,9 @@ public class Database {
      *            to set to the Concept
      */
     public void setMeasurement(String conceptCode, Measurement measurement) {
-        Concept concept = getAddConcept(conceptCode);
-        concept.setMeasurement(measurement);
+        ConceptBreakdown bd = addConceptBreakdown(
+                measurement.getParentConcept(), conceptCode);
+        bd.setMeasurement(measurement);
         orphanMeasurements.remove(measurement);
     }
 
@@ -393,7 +421,9 @@ public class Database {
                 + generatedBy + ", Header: " + header + ", Charset: " + charset
                 + ", Comments: " + comments + ", Information type: " + infoType
                 + ", Certification number: " + certNum
-                + ", Certification date: " + certDate + ", Root concept: \n\t"
-                + rootConcept + "}";
+                + ", Certification date: " + certDate + ", Concepts: "
+                + concepts + ", Root Concept Breakdown: \n\t" + root
+                + "\n, Orphan Breakdowns: " + orphanBreakdowns
+                + ", Orphan Measurements: " + orphanMeasurements + "}";
     }
 }

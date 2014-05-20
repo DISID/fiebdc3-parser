@@ -17,8 +17,7 @@
  */
 package com.disid.fiebdc3;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,27 +37,54 @@ public class DatabaseTest {
 
     @Test
     public void testGetConcept() {
-        TestConcept testConcept = new TestConcept("test");
-        database.setRootConcept(testConcept);
-        
-        Concept concept = database.getConcept("test");
-        
-        assertTrue(testConcept.conceptCalled);
-        assertEquals(testConcept, concept);
+        Concept testConcept = database.getConcept("test");
+        assertNull(testConcept);
+
+        testConcept = database.getOrAddConcept("test");
+
+        assertNotNull(testConcept);
+        assertEquals("test", testConcept.getCode());
+
+        testConcept = database.getConcept("test");
+        assertNotNull(testConcept);
+
+        ConceptBreakdown bd = database.addConceptBreakdown("test");
+        assertEquals(testConcept, database.getConcept(bd));
     }
 
-    private class TestConcept extends Concept {
+    @Test
+    public void testAddConceptBreakdown() {
+        // Add an orphan ConceptBreakdown
+        ConceptBreakdown bd = database.addConceptBreakdown("test");
+        assertEquals(null, bd.getParentConceptCode());
+        assertEquals("test", bd.getConceptCode());
+        assertTrue(database.hasOrphanedConceptBreakdowns());
 
-        boolean conceptCalled = false;
-        
-        TestConcept(String code) {
-            super(code);
-        }
+        // Add the orphan Breakdown to a parent one
+        ConceptBreakdown bd3 = database.addConceptBreakdown("parent", "test");
+        assertEquals("parent", bd3.getParentConceptCode());
+        assertEquals("test", bd3.getConceptCode());
+        assertTrue(database.hasOrphanedConceptBreakdowns());
+        database.setRoot("parent");
+        assertFalse(database.hasOrphanedConceptBreakdowns());
 
-        @Override
-        public Concept getConcept(String code) {
-            conceptCalled = true;
-            return this;
-        }
+        // Add another child to the root ConceptBreakdown
+        ConceptBreakdown bd2 = database.addConceptBreakdown("parent", "child");
+        assertEquals("parent", bd2.getParentConceptCode());
+        assertEquals("child", bd2.getConceptCode());
+        assertFalse(database.hasOrphanedConceptBreakdowns());
     }
+
+    @Test
+    public void testAddMeasurement() {
+        Measurement measurement = database.createMeasurement();
+        assertTrue(database.hasOrphanedMeasurements());
+
+        database.setMeasurement("test", measurement);
+        assertFalse(database.hasOrphanedMeasurements());
+
+        ConceptBreakdown bd = database.addConceptBreakdown("test");
+        assertEquals(measurement, bd.getMeasurement());
+    }
+
 }

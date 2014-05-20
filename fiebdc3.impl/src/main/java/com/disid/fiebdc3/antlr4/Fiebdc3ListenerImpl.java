@@ -21,10 +21,11 @@ package com.disid.fiebdc3.antlr4;
 import java.util.Date;
 
 import com.disid.fiebdc3.Concept;
+import com.disid.fiebdc3.ConceptBreakdown;
 import com.disid.fiebdc3.Database;
 import com.disid.fiebdc3.Database.Charset;
 import com.disid.fiebdc3.Measurement;
-import com.disid.fiebdc3.Measurement.Line;
+import com.disid.fiebdc3.MeasurementLine;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CCodeContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CConceptContext;
 import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CDateContext;
@@ -73,9 +74,14 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     private Database database = new Database();
 
     private Concept currentConcept;
-    private Concept currentChildConcept;
+    private ConceptBreakdown currentBreakdown;
+    private ConceptBreakdown currentChildBreakdown;
     private Measurement currentMeasurement;
-    private Line currentLine;
+    private MeasurementLine currentLine;
+
+    public Database getDatabase() {
+        return database;
+    }
 
     // //////////////
     // V register //
@@ -136,14 +142,7 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     @Override
     public void enterCCode(CCodeContext ctx) {
         String code = ctx.getText().trim();
-        currentConcept = database.getConcept(code);
-        if (currentConcept == null) {
-            if (code.endsWith("##")) {
-                currentConcept = database.addRootConcept(code);
-            } else {
-                currentConcept = database.addOrphanConcept(code);
-            }
-        }
+        currentConcept = database.getOrAddConcept(code);
     }
 
     @Override
@@ -186,17 +185,20 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     @Override
     public void enterDParentCode(DParentCodeContext ctx) {
         String code = ctx.getText().trim();
-        currentConcept = database.getAddConcept(code);
+
+        if (code.endsWith("##")) {
+            currentBreakdown = database.setRoot(code);
+        } else {
+            currentBreakdown = database.addConceptBreakdown(code);
+        }
     }
 
     @Override
     public void enterDChildCode(DChildCodeContext ctx) {
         String childCode = ctx.getText().trim();
-        currentChildConcept = currentConcept.getConcept(childCode);
-        if (currentChildConcept == null) {
-            currentChildConcept = database.addChildConcept(childCode,
-                    currentConcept);
-        }
+
+        currentChildBreakdown = database.addConceptBreakdown(
+                currentBreakdown.getConceptCode(), childCode);
     }
 
     @Override
@@ -204,7 +206,7 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
         String text = ctx.getText().trim();
         if (text.length() > 0) {
             Float value = Float.parseFloat(text);
-            currentChildConcept.setFactor(value);
+            currentChildBreakdown.setFactor(value);
         }
     }
 
@@ -212,17 +214,13 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     public void enterDPerformance(DPerformanceContext ctx) {
         String text = ctx.getText().trim();
         Float value = Float.parseFloat(text);
-        currentChildConcept.setPerformance(value);
+        currentChildBreakdown.setPerformance(value);
     }
 
     @Override
     public void exitDBreakdown(DBreakdownContext ctx) {
-        currentConcept = null;
-        currentChildConcept = null;
-    }
-
-    public Database getDatabase() {
-        return database;
+        currentBreakdown = null;
+        currentChildBreakdown = null;
     }
 
     // //////////////
@@ -231,7 +229,7 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     @Override
     public void enterTConceptCode(TConceptCodeContext ctx) {
         String code = ctx.getText().trim();
-        currentConcept = database.getAddConcept(code);
+        currentConcept = database.getOrAddConcept(code);
     }
 
     @Override
@@ -249,7 +247,7 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     // //////////////
     @Override
     public void enterMMeasurement(MMeasurementContext ctx) {
-        this.currentMeasurement = database.addMeasurement();
+        this.currentMeasurement = database.createMeasurement();
     }
 
     @Override
@@ -259,7 +257,8 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
 
     @Override
     public void enterMChildCode(MChildCodeContext ctx) {
-        database.setMeasurement(ctx.getText().trim(), currentMeasurement);
+        String conceptCode = ctx.getText().trim();
+        database.setMeasurement(conceptCode, currentMeasurement);
     }
 
     @Override

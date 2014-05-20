@@ -41,15 +41,7 @@ public class Concept {
 
     private String type;
 
-    private Float factor = 1.0f;
-
-    private Float performance = 1.0f;
-
     private String description;
-
-    private List<Concept> childConcepts;
-    
-    private Measurement measurement;
 
     /**
      * Creates a concept with the given code.
@@ -58,7 +50,7 @@ public class Concept {
      *            which uniquely identifies a concept
      */
     Concept(String code) {
-        this.code = cleanCode(code);
+        this.code = code;
     }
 
     /**
@@ -73,7 +65,7 @@ public class Concept {
     }
 
     public void setCode(String code) {
-        this.code = cleanCode(code);
+        this.code = code;
     }
 
     /**
@@ -183,31 +175,6 @@ public class Concept {
 
     /**
      * Spec definition:<br/>
-     * <i>FACTOR: Factor de rendimiento, por defecto 1.0</i>
-     */
-    public Float getFactor() {
-        return factor;
-    }
-
-    public void setFactor(Float factor) {
-        this.factor = factor;
-    }
-
-    /**
-     * Spec definition:<br/>
-     * <i>RENDIMIENTO: Número de unidades, rendimiento o medición, por defecto
-     * 1.0</i>
-     */
-    public Float getPerformance() {
-        return performance;
-    }
-
-    public void setPerformance(Float performance) {
-        this.performance = performance;
-    }
-
-    /**
-     * Spec definition:<br/>
      * <i>TEXTO_DESCRIPTIVO: Texto descriptivo del concepto sin limitación de
      * tamaño. El texto podrá contener caracteres fin de línea (ASCII-13 +
      * ASCII-10) que se mantendrán al reformatearlo.</i>
@@ -220,103 +187,11 @@ public class Concept {
         this.description = description;
     }
 
-    /**
-     * Breakdown of this concepts in subconcepts.
-     * 
-     * @return the list of child concepts.
-     */
-    public Iterable<Concept> getChildConcepts() {
-        return childConcepts;
-    }
-
-    /**
-     * Adds a new child concept
-     * 
-     * @param concept
-     *            the child concept
-     * @return if it was already included as a child concept
-     */
-    boolean addChildConcept(Concept concept) {
-        if (childConcepts == null) {
-            childConcepts = new ArrayList<Concept>();
-        }
-        return childConcepts.add(concept);
-    }
-
-    /**
-     * Returns a descendant concept with the given code, which might include '\'
-     * separators to define a path of concept codes.
-     * 
-     * @param code
-     *            to find
-     * @return the found code or null
-     */
-    public Concept getConcept(String code) {
-        String parentCode = code;
-        String childCode = code;
-        int pathPosition = code.indexOf('\\');
-        if (pathPosition > 0) {
-            parentCode = code.substring(0, pathPosition);
-            childCode = code.substring(pathPosition + 1);
-            if (isMyCode(parentCode)) {
-                return getChildConcept(childCode);
-            }
-            return null;
-        }
-
-        if (isMyCode(parentCode)) {
-            return this;
-        } else {
-            return getChildConcept(childCode);
-        }
-    }
-
-    private Concept getChildConcept(String childCode) {
-        if (childConcepts != null) {
-            for (Concept childConcept : childConcepts) {
-                Concept concept = childConcept.getConcept(childCode);
-                if (concept != null) {
-                    return concept;
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the measurement related to this concept.
-     * 
-     * @return the measurement related to this concept
-     */
-    public Measurement getMeasurement() {
-        return measurement;
-    }
-
-    public void setMeasurement(Measurement measurement) {
-        this.measurement = measurement;
-    }
-
-    private boolean isMyCode(String code) {
-        String cleanedCode = cleanCode(code);
-
-        return (this.code != null && this.code.equals(cleanedCode));
-    }
-
-    private String cleanCode(String code) {
-        while (code.endsWith("#")) {
-            code = code.substring(0, code.length() - 1);
-        }
-        return code;
-    }
-
     @Override
     public String toString() {
         return "Concept {" + "Code: " + code + ", Summary: " + summary
                 + ", Type: " + type + ", Measure unit: " + measureUnit
                 + ", Prices: " + prices + ", Last updates: " + lastUpdates
-                + ", Factor: " + factor + ", Performance: " + performance
-                + ", Description: " + description
-                + ", Measurement: " + measurement
-                + ", Child concepts: \n\t" + childConcepts + "}";
+                + ", Description: " + description + "}";
     }
 }
