@@ -35,7 +35,7 @@ import java.util.Set;
  * database
  * '-> list of concepts
  * '-> root concept breakdown (related to a concept)
- *     |-> child concept breakdown 1 (related to a concept, might have chapter or workunit as children)
+ *     |-> child concept breakdown 1 (related to a concept, might have chapter or work package as children)
  *     |   '-> grandson concept breakdown (related to a concept)
  *     |       |-> measurement 1
  *     |       |-> measurement 2

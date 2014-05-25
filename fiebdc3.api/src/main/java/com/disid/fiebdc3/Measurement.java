@@ -82,9 +82,9 @@ public class Measurement {
     }
 
     /**
-     * Returns the measurements of the work unit.
+     * Returns the measurements of the work chapter.
      * 
-     * @return the measurements of the work unit
+     * @return the measurements of the work chapter
      */
     public List<MeasurementLine> getMeasurements() {
         return measurements;
