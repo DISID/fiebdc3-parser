@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * Breakdown information a Fiebdc 3 database concept. A concept of chapter type
- * might be composed of other subchapters or concepts of type work unit. This
+ * might be composed of other subchapters or concepts of type work chapter. This
  * class models the information of each subconcept in the breakdown of the
  * parent concept.
  * 
@@ -39,7 +39,7 @@ public class ConceptBreakdown {
 
     private Float performance = 1.0f;
 
-    private List<ConceptBreakdown> childBreakdown;
+    private List<ConceptBreakdown> childBreakdown = new ArrayList<ConceptBreakdown>();
 
     private Measurement measurement;
 
@@ -124,18 +124,26 @@ public class ConceptBreakdown {
                 .equals(cleanedCode));
     }
 
+    /**
+     * Just return the code, don't do anything more. Older versions remove the
+     * '#' symbol that may contain the code, but currently this code is
+     * commented.
+     * 
+     * @param code the code.
+     * @return the code cleaned.
+     */
     private String cleanCode(String code) {
-        if (code == null) {
-            return null;
-        }
-        while (code.endsWith("#")) {
-            code = code.substring(0, code.length() - 1);
-        }
+//        if (code == null) {
+//            return null;
+//        }
+//        while (code.endsWith("#")) {
+//            code = code.substring(0, code.length() - 1);
+//        }
         return code;
     }
 
     /**
-     * Breakdown of this chapter in subchapters or work units.
+     * Breakdown of this chapter in subchapters or work chapters.
      * 
      * @return the list of child BreakdownInfos.
      */
@@ -161,8 +169,8 @@ public class ConceptBreakdown {
      * Returns this or a child BreakdownInfo with the given code, which might
      * include '\' separators to define a path of concept codes.
      * 
-     * @param code
-     *            to find
+     * @param conceptCode
+     *            the code to find
      * @return the found code's BreakdownInfo or null
      */
     public ConceptBreakdown getCodeBreakdown(String conceptCode) {
