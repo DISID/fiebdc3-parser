@@ -4,6 +4,7 @@
 ~D|ROOT##
 |01#\\1
 \02#\\1
+\03#\\1
 \|
 
 ~C|01#||Subconcept 1|148|210314|0|
@@ -20,11 +21,20 @@
 \B01\\1
 \|
 
+~C|03#||Subconcept 3|5.0|210314|0|
+~T|03#|Subconcept 3 description|
+~D|03#
+|C01\\1
+\|
+
 ~C|A01||Subsubconcept A01|10|210314|0|
 ~T|A01|Subsubconcept A01 description|
 
 ~C|B01||Subsubconcept 1B|2.4|210314|0|
 ~T|B01|Subsubconcept 1B description|
+
+~C|C01||Subsubconcept C|0.0|210314|0|
+~T|C01|Subsubconcept without measurements|
 
 ~M|01#\A01|1\1\1\|10|
 \Line A01 1\1\2\\\
