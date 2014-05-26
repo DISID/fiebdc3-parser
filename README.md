@@ -74,5 +74,7 @@ database
     '-> concept n
 ```
     
-Take a look at the Javadoc of the parser API for more information. *TODO: link to javadoc*.
+Take a look at the Javadoc of the parser API for more information. 
+
+Javadoc and other technical reports are available in the project's maven site: http://disid.github.io/fiebdc3-parser/sites/0.1.0-SNAPSHOT/
 
