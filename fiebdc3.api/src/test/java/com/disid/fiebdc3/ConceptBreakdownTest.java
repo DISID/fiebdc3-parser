@@ -38,12 +38,12 @@ public class ConceptBreakdownTest {
 
     @Before
     public void setUp() throws Exception {
-        root = new ConceptBreakdown(null, "root");
+        root = new ConceptBreakdown(null, "root##");
 
-        child = new ConceptBreakdown("root", "child");
+        child = new ConceptBreakdown("root##", "child#");
         root.addChildBreakdownInfo(child);
 
-        grandchild = new ConceptBreakdown("child", "grandchild");
+        grandchild = new ConceptBreakdown("child#", "grandchild");
         child.addChildBreakdownInfo(grandchild);
     }
 
@@ -51,21 +51,21 @@ public class ConceptBreakdownTest {
     public void testConceptCodes() {
         // Concept codes
         assertEquals(null, root.getParentConceptCode());
-        assertEquals("root", root.getConceptCode());
-        assertEquals("root", child.getParentConceptCode());
-        assertEquals("child", child.getConceptCode());
+        assertEquals("root##", root.getConceptCode());
+        assertEquals("root##", child.getParentConceptCode());
+        assertEquals("child#", child.getConceptCode());
 
         // Cleaned concept codes
         root = new ConceptBreakdown("parent##", "test#");
-        assertEquals("parent", root.getParentConceptCode());
-        assertEquals("test", root.getConceptCode());
+        assertEquals("parent##", root.getParentConceptCode());
+        assertEquals("test#", root.getConceptCode());
     }
 
     @Test
     public void testIsMyConceptCode() {
         // Check concept code equality
-        assertTrue(root.isMyConceptCode("root"));
-        assertTrue(root.isMyConceptCode("root#"));
+        assertFalse(root.isMyConceptCode("root"));
+        assertFalse(root.isMyConceptCode("root#"));
         assertTrue(root.isMyConceptCode("root##"));
 
         assertFalse(root.isMyConceptCode("parent"));
@@ -86,9 +86,9 @@ public class ConceptBreakdownTest {
     @Test
     public void testGetSubchapter() {
         // Concept code with parents path
-        assertEquals(child, root.getCodeBreakdown("root\\child"));
+        assertEquals(child, root.getCodeBreakdown("root##\\child#"));
         assertEquals(grandchild,
-                root.getCodeBreakdown("root\\child\\grandchild"));
+                root.getCodeBreakdown("root##\\child#\\grandchild"));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class ConceptBreakdownTest {
         // Concept code with #'s at the end
         assertEquals(root, root.getCodeBreakdown("root##"));
         assertEquals(child, root.getCodeBreakdown("child#"));
-        assertEquals(grandchild, root.getCodeBreakdown("grandchild#"));
+        assertEquals(grandchild, root.getCodeBreakdown("grandchild"));
     }
 
     @Test
