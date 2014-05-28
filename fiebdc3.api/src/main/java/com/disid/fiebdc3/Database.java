@@ -289,18 +289,22 @@ public class Database {
             return addConceptBreakdown(code);
         }
         ConceptBreakdown parent = addConceptBreakdown(parentCode);
-        // Is already an organized ConceptBreakdown
+        
+        // It's already an organized ConceptBreakdown
         ConceptBreakdown bd = parent.getCodeBreakdown(code);
-        // Is still an orphan breakdown
+        
+        // It's still an orphan breakdown
         if (bd == null) {
             bd = orphanBreakdowns.remove(code);
+            
+            // It still does not exist
+            if (bd == null) {
+                bd = new ConceptBreakdown(parentCode, code);
+            }
+            parent.addChildBreakdownInfo(bd);
+            bd.setParentConceptCode(parentCode);
         }
-        // It still does not exist
-        if (bd == null) {
-            bd = new ConceptBreakdown(parentCode, code);
-        }
-        parent.addChildBreakdownInfo(bd);
-        bd.setParentConceptCode(parentCode);
+        
         return bd;
     }
 

@@ -18,8 +18,8 @@
 
 package com.disid.fiebdc3;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Breakdown information a Fiebdc 3 database concept. A concept of chapter type
@@ -39,7 +39,7 @@ public class ConceptBreakdown {
 
     private Float performance = 1.0f;
 
-    private List<ConceptBreakdown> childBreakdown = new ArrayList<ConceptBreakdown>();
+    private Set<ConceptBreakdown> childBreakdown = new LinkedHashSet<ConceptBreakdown>();
 
     private Measurement measurement;
 
@@ -160,7 +160,7 @@ public class ConceptBreakdown {
      */
     boolean addChildBreakdownInfo(ConceptBreakdown breakdownInfo) {
         if (childBreakdown == null) {
-            childBreakdown = new ArrayList<ConceptBreakdown>();
+            childBreakdown = new LinkedHashSet<ConceptBreakdown>();
         }
         return childBreakdown.add(breakdownInfo);
     }
