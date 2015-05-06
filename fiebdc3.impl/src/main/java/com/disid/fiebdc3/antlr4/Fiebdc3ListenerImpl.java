@@ -18,51 +18,11 @@
 
 package com.disid.fiebdc3.antlr4;
 
-import java.util.Date;
-
-import com.disid.fiebdc3.Concept;
-import com.disid.fiebdc3.ConceptBreakdown;
-import com.disid.fiebdc3.Database;
+import com.disid.fiebdc3.*;
 import com.disid.fiebdc3.Database.Charset;
-import com.disid.fiebdc3.Measurement;
-import com.disid.fiebdc3.MeasurementLine;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CCodeContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CConceptContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CDateContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CPriceContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CSummaryContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CTypeContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.CUnitContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DBreakdownContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DChildCodeContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DFactorContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DParentCodeContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.DPerformanceContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MChildCodeContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MCommentContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MHeightContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MLabelContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MLatitudeContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MLineContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MLongitudeContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MMeasurementContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MParentCodeContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MPositionContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MTotalMeasurementContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MTypeContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.MUnitsContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.TConceptCodeContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.TDescriptionContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.TTextContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VCertDateContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VCertNumContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VCharsetContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VCommentsContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VFilePropertyContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VGeneratedByContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VHeaderContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VInfoTypeContext;
-import com.disid.fiebdc3.antlr4.Fiebdc3Parser.VVersionFormatContext;
+import com.disid.fiebdc3.antlr4.Fiebdc3Parser.*;
+
+import java.util.Date;
 
 /**
  * Listener for the Fiebdc3 parser events.
@@ -141,7 +101,7 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     // //////////////
     @Override
     public void enterCCode(CCodeContext ctx) {
-        String code = ctx.getText().trim();
+        String code = ctx.getText().trim().replace("#", "");
         currentConcept = database.getOrAddConcept(code);
     }
 
@@ -187,18 +147,18 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
         String code = ctx.getText().trim();
 
         if (code.endsWith("##")) {
-            currentBreakdown = database.setRoot(code);
+            currentBreakdown = database.setRoot(code.replace("#", ""));
         } else {
-            currentBreakdown = database.addConceptBreakdown(code);
+            currentBreakdown = database.addConceptBreakdown(code.replace("#", ""));
         }
     }
 
     @Override
     public void enterDChildCode(DChildCodeContext ctx) {
-        String childCode = ctx.getText().trim();
+        String childCode = ctx.getText().trim().replace("#", "");
 
         currentChildBreakdown = database.addConceptBreakdown(
-                currentBreakdown.getConceptCode(), childCode);
+                currentBreakdown.getConceptCode().replace("#", ""), childCode);
     }
 
     @Override
@@ -228,7 +188,7 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
     // //////////////
     @Override
     public void enterTConceptCode(TConceptCodeContext ctx) {
-        String code = ctx.getText().trim();
+        String code = ctx.getText().trim().replace("#", "");
         currentConcept = database.getOrAddConcept(code);
     }
 
@@ -252,12 +212,12 @@ public class Fiebdc3ListenerImpl extends Fiebdc3BaseListener {
 
     @Override
     public void enterMParentCode(MParentCodeContext ctx) {
-        currentMeasurement.setParentConcept(ctx.getText().trim());
+        currentMeasurement.setParentConcept(ctx.getText().trim().replace("#", ""));
     }
 
     @Override
     public void enterMChildCode(MChildCodeContext ctx) {
-        String conceptCode = ctx.getText().trim();
+        String conceptCode = ctx.getText().trim().replace("#", "");
         database.setMeasurement(conceptCode, currentMeasurement);
     }
 
